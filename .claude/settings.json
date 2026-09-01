@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npx tsx \"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--CA-RMHStaffPortal-one-page-party-analysis\\\\51f50090-d4ab-4e5e-8347-d6ed556ba335\\\\scratchpad\\\\extractReal.mjs\" \"D:\\\\Data\\\\ai-bankconverter\\\\normal data\")"
+    ]
+  }
+}

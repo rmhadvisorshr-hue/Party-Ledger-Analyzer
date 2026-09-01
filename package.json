@@ -1,0 +1,26 @@
+{
+  "name": "party-ledger-analyzer-workspace",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "cd frontend && vite dev",
+    "dev:portal": "cd frontend && npm run dev:portal",
+    "dev:server": "npm run dev --workspace backend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run preview --workspace frontend",
+    "typecheck": "npm exec --workspace frontend tsc -- --noEmit",
+    "typecheck:backend": "npm run typecheck --workspace backend",
+    "lint": "npm run lint --workspace frontend",
+    "benchmark:pdfs": "npm run benchmark:pdfs --workspace backend",
+    "debug:pdf": "npm run debug:pdf --workspace backend",
+    "compare:namdar": "npm run compare:namdar --workspace backend",
+    "render:build": "npm install && NODE_OPTIONS=--max-old-space-size=1024 npm run build --workspace frontend",
+    "render:start": "npm run preview --workspace frontend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMH.PLA — Engineering Knowledge Base</title>
+<style>
+  @media (prefers-color-scheme: dark) {}
+  :root {
+    --bg: #F1F4ED;
+    --surface: #FFFFFF;
+    --surface-2: #E7ECDF;
+    --surface-3: #DDE4D2;
+    --text: #182119;
+    --text-muted: #57624F;
+    --text-faint: #8A9482;
+    --border: #D5DCC8;
+    --accent: #2E6B4F;
+    --accent-strong: #1F5039;
+    --accent-soft: #DCEAE0;
+    --stamp: #A85A22;
+    --stamp-soft: #F1E1CD;
+    --code-bg: #E9EEE1;
+    --shadow: 0 1px 2px rgba(24,33,25,0.06), 0 8px 24px rgba(24,33,25,0.05);
+  }
+  :root[data-theme="dark"] {
+    --bg: #12160F;
+    --surface: #191F17;
+    --surface-2: #212820;
+    --surface-3: #2A332A;
+    --text: #E8ECE2;
+    --text-muted: #A2AC98;
+    --text-faint: #6C7566;
+    --border: #2B332A;
+    --accent: #6FC79A;
+    --accent-strong: #8FDBB2;
+    --accent-soft: #1D3327;
+    --stamp: #E2955F;
+    --stamp-soft: #3A2717;
+    --code-bg: #1C2318;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12160F;
+      --surface: #191F17;
+      --surface-2: #212820;
+      --surface-3: #2A332A;
+      --text: #E8ECE2;
+      --text-muted: #A2AC98;
+      --text-faint: #6C7566;
+      --border: #2B332A;
+      --accent: #6FC79A;
+      --accent-strong: #8FDBB2;
+      --accent-soft: #1D3327;
+      --stamp: #E2955F;
+      --stamp-soft: #3A2717;
+      --code-bg: #1C2318;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent-soft); }
+
+  a { color: var(--accent-strong); }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.05em 0.4em;
+    font-size: 0.86em;
+    white-space: nowrap;
+  }
+  h1, h2, h3, h4 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    font-weight: 600;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 250px minmax(0,1fr);
+    gap: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .toc { display: none; }
+  }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 18px 40px 24px;
+    border-right: 1px solid var(--border);
+  }
+  .toc-brand {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .toc-brand span { color: var(--accent); }
+  .toc-sub {
+    font-size: 10.5px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 22px;
+  }
+  .toc ol {
+    list-style: none;
+    margin: 0; padding: 0;
+    counter-reset: toc;
+  }
+  .toc li { counter-increment: toc; margin-bottom: 3px; }
+  .toc a {
+    display: flex; gap: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 12.6px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    line-height: 1.3;
+  }
+  .toc a:hover { background: var(--surface-2); color: var(--text); }
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: ui-monospace, monospace;
+    color: var(--accent);
+    font-size: 11px;
+    flex: none;
+    padding-top: 1px;
+  }
+
+  /* ---------- Main content ---------- */
+  .content { padding: 40px 44px 120px; min-width: 0; }
+  @media (max-width: 640px) { .content { padding: 28px 18px 90px; } }
+
+  header.masthead {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+  .kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent-strong);
+    font-family: ui-monospace, monospace;
+    margin-bottom: 10px;
+  }
+  h1.title { font-size: 34px; margin: 0 0 10px; }
+  .dek { color: var(--text-muted); max-width: 62ch; font-size: 15.5px; margin: 0 0 18px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 8px;
+    color: var(--text-muted);
+  }
+
+  section.sec { margin-bottom: 52px; scroll-margin-top: 20px; }
+  .sec-eyebrow {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  h2.sec-title { font-size: 24px; margin: 2px 0 16px; }
+  h3.sub-title { font-size: 17px; margin: 28px 0 10px; color: var(--text); }
+  h4.mini-title {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); margin: 18px 0 6px;
+  }
+  p { max-width: 74ch; }
+  .lede { font-size: 16.5px; color: var(--text); max-width: 68ch; }
+  ul.tight { margin: 8px 0; padding-left: 1.2em; }
+  ul.tight li { margin-bottom: 5px; max-width: 72ch; }
+
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    box-shadow: var(--shadow);
+  }
+  .callout.note { border-left-color: var(--stamp); }
+  .callout .label {
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-strong);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .callout.note .label { color: var(--stamp); }
+  .callout p { margin: 4px 0 0; font-size: 14.2px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.6px;
+    margin: 10px 0 22px;
+  }
+  caption { text-align: left; }
+  thead th {
+    text-align: left;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 10px 8px 0;
+    font-weight: 600;
+  }
+  tbody td {
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.mono, th.mono { font-family: ui-monospace, monospace; font-size: 12.4px; white-space: nowrap; }
+  .tablewrap { overflow-x: auto; }
+
+  .flow-list { counter-reset: flow; list-style: none; margin: 0; padding: 0; }
+  .flow-list > li {
+    counter-increment: flow;
+    position: relative;
+    padding: 2px 0 18px 34px;
+    border-left: 2px solid var(--border);
+    margin-left: 13px;
+  }
+  .flow-list > li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .flow-list > li::before {
+    content: counter(flow);
+    position: absolute; left: -13px; top: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: var(--surface);
+    font-family: ui-monospace, monospace; font-size: 11.5px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-list p, .flow-list div.body { margin: 0; font-size: 14.2px; max-width: 70ch; }
+  .flow-list strong.step-title { display:block; font-size: 14.6px; margin-bottom: 3px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; margin: 14px 0 8px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--text); text-transform: none; letter-spacing: 0; }
+  .card .file { display:block; margin-bottom: 8px; }
+  .card p { font-size: 13.3px; margin: 6px 0; color: var(--text-muted); }
+  .card p strong { color: var(--text); }
+  .qa-list { margin: 0; padding-left: 1.3em; }
+  .qa-list li { font-size: 13px; margin-bottom: 5px; }
+
+  .decision {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .decision h3 { margin: 0 0 10px; font-size: 16px; }
+  .decision dl { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; margin: 0; }
+  .decision dt { font-family: ui-monospace, monospace; font-size: 10.5px; text-transform: uppercase; color: var(--text-faint); padding-top: 2px; letter-spacing: 0.06em; }
+  .decision dd { margin: 0; font-size: 13.8px; }
+
+  .star-grid { display: grid; grid-template-columns: 90px 1fr; gap: 4px 18px; }
+  .star-grid dt { font-family: Georgia, serif; font-weight: 700; color: var(--accent-strong); font-size: 15px; }
+  .star-grid dd { margin: 0 0 18px; font-size: 14.6px; max-width: 70ch; }
+
+  .resume-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--stamp);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 14.4px;
+    box-shadow: var(--shadow);
+  }
+
+  pre.paste {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 12.6px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .num { font-variant-numeric: tabular-nums; }
+  footer.end {
+    margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 11.5px; color: var(--text-faint);
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="toc">
+    <div class="toc-brand">RMH<span>.</span>PLA</div>
+    <div class="toc-sub">Engineering Knowledge Base</div>
+    <ol>
+      <li><a href="#scope">Scope &amp; method</a></li>
+      <li><a href="#purpose">Project purpose</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#system-design">System design</a></li>
+      <li><a href="#technologies">Technologies</a></li>
+      <li><a href="#folders">Folder structure</a></li>
+      <li><a href="#files">Important files</a></li>
+      <li><a href="#components">Important components</a></li>
+      <li><a href="#decisions">Engineering decisions</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#performance">Performance</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+      <li><a href="#star">STAR story</a></li>
+      <li><a href="#resume">Resume summary</a></li>
+      <li><a href="#concepts">Concepts</a></li>
+      <li><a href="#db">Database entries</a></li>
+    </ol>
+  </nav>
+
+  <main class="content">
+    <header class="masthead">
+      <div class="kicker">Reverse-engineered codebase documentation</div>
+      <h1 class="title">RMH.PLA — Party Ledger Analyzer</h1>
+      <p class="dek">A complete, evidence-only walkthrough of the codebase as it exists today: what it does, how it's built, why it's built that way, and what to say about it in an interview.</p>
+      <div class="meta-row">
+        <span class="chip">repo: one-page-party-analysis</span>
+        <span class="chip">monorepo: CA-RMHStaffPortal</span>
+        <span class="chip">reviewed: 2026-07-21</span>
+        <span class="chip">source of truth: frontend/**</span>
+      </div>
+    </header>
+
+    <section class="sec" id="scope">
+      <div class="sec-eyebrow">00</div>
+      <h2 class="sec-title">Scope &amp; method</h2>
+      <p>Everything below comes from reading the actual source files in this repository — no assumptions, no invented features. Two things are worth stating up front because they shape every other section:</p>
+      <div class="callout note">
+        <span class="label">Dead code excluded</span>
+        <p>There are <strong>two parallel backend trees</strong>: <code>frontend/server/src/*</code> (the one actually wired into the running app via <code>frontend/server/createApp.ts</code>) and a root-level <code>src/*</code> with an almost identical file list. The root copy is missing <code>lib/prisma.ts</code>, <code>services/partyOverrides.ts</code>, <code>services/excelSectionNav.ts</code>, and <code>converter/tesseractExtractor.js</code> — i.e. it predates the Prisma override layer and OCR support. No script in either <code>package.json</code> touches it. The root <code>README.md</code> calls it "<code>backend/</code>, a legacy standalone copy," but no <code>backend/</code> folder exists on disk — this is that legacy copy, just not renamed. It is excluded from every section below as dead code, per instructions.</p>
+      </div>
+      <div class="callout note">
+        <span class="label">Deployment config: not enough evidence</span>
+        <p>The git root is actually <code>D:/CA-RMHStaffPortal</code>, a monorepo holding several sibling projects. Its <code>render.yaml</code> configures a Docker service named <code>ca-rmhstaffportal</code> with no reference to this sub-app, so it cannot be treated as this project's own deploy config. This app's only concrete deployment evidence is <code>vite.config.ts</code>'s <code>preview.allowedHosts</code> entry (<code>bank-statement-analyzer-ws8z.onrender.com</code>) and its <code>render:build</code>/<code>render:start</code> npm scripts — enough to say "runs as one Node process on Render," not enough to describe the exact service topology.</p>
+      </div>
+    </section>
+
+    <section class="sec" id="purpose">
+      <div class="sec-eyebrow">01</div>
+      <h2 class="sec-title">Project purpose</h2>
+      <p class="lede">Converts an Indian bank statement — native PDF, password-protected PDF, or a scanned/photographed PDF or image — into a party-wise transaction ledger: every transaction resolved to a real counterparty (a person, a business, or a bank-system event like a sweep or settlement), grouped, totalled, and exportable into a full set of CA-style due-diligence reports.</p>
+
+      <h3 class="sub-title">What problem does it solve?</h3>
+      <p>Manually reading a bank statement PDF to build a party-wise ledger — who paid whom, how much, how often, which entries are salary/EMI/bounce/statutory-tax noise — is slow and inconsistent when done by hand across many statements and staff. This tool automates extraction (including OCR for scans) and counterparty resolution (a genuinely messy text problem: UPI handles, bank reference codes, OCR spacing errors), while still giving a human final say over the grouping before anything is exported.</p>
+
+      <h3 class="sub-title">Who would use it?</h3>
+      <p>The application accepts <code>applicantName</code>, <code>entityType</code>, <code>pan</code>, and <code>loanType</code> as analysis inputs — fields that only make sense in a lending/credit-appraisal or accountancy due-diligence context, not a personal-finance app. It is branded "RMH.PLA — Party Ledger Analyzer" and is mounted as one tool inside a larger internal system: a code comment in <code>site-chrome.tsx</code> notes the router's basepath is "its own <code>/__tools/one-page-party-analysis/</code> mount prefix" inside a staff portal, with a "Back to Dashboard" link out to that portal's root. Combined with the monorepo's name (<code>CA-RMHStaffPortal</code>), the strong inference is an internal tool for staff at a Chartered Accountancy / financial-advisory practice, used while reviewing a client's or loan applicant's bank statements. <em>(This is inference from strong contextual evidence — the app itself never states its audience in these words.)</em></p>
+    </section>
+
+    <section class="sec" id="architecture">
+      <div class="sec-eyebrow">02</div>
+      <h2 class="sec-title">Architecture</h2>
+
+      <h3 class="sub-title">Frontend</h3>
+      <p>React 19 rendered through <strong>TanStack Start</strong> (a file-based-routing SSR framework built on Vite, using <strong>h3</strong> as its server-request abstraction) with <strong>TanStack Router</strong> for routes and <strong>TanStack Query</strong>'s <code>QueryClient</code> instantiated in <code>router.tsx</code>. Styling is <strong>Tailwind CSS v4</strong> plus a local <em>shadcn/ui</em>-style component layer (<code>frontend/src/components/ui</code>) built on <strong>Radix UI</strong> primitives. <strong>Recharts</strong> renders the numeric charts implied by <code>lib/dailyMetrics.ts</code>'s chart-tick helpers; <strong>Framer Motion</strong> drives the upload-row and progress-step animations.</p>
+
+      <h3 class="sub-title">Backend</h3>
+      <p>An <strong>Express 5</strong> app (<code>frontend/server/createApp.ts</code>) — but it is never run as its own server. In dev, a custom Vite plugin (<code>vite-plugin-api.ts</code>) mounts the Express app as Connect middleware inside Vite's own dev/preview server. In production, <code>frontend/server/apiFetch.ts</code> wraps the same Express app with h3's <code>fromNodeMiddleware</code> to produce a Fetch-API-shaped handler, which <code>frontend/src/server.ts</code> (the actual deploy entry point) tries first on every request before falling through to TanStack Start's own SSR handler. One Node process, one port, serves the React app and <code>/api/*</code> + <code>/health</code>.</p>
+
+      <h3 class="sub-title">Database</h3>
+      <p><strong>SQLite</strong> (a single file, <code>frontend/server/data/party-ledger.db</code>), accessed through <strong>Prisma 7</strong> using its newer <code>prisma-client</code> generator plus the <code>@prisma/adapter-better-sqlite3</code> driver adapter — a pure JS/native-binding path with no Prisma query-engine binary. Only three tables exist (<code>Party</code>, <code>TransactionAssignment</code>, <code>PartyAuditLog</code>) and they store <em>only manual corrections and their audit trail</em> — the computed analysis report itself is never written to this database (see <a href="#decisions">Engineering Decisions §1</a>).</p>
+
+      <h3 class="sub-title">APIs</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Router</th><th>Mounted at</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">convertRouter</td><td class="mono">/api/convert</td><td>Stateless one-shot: upload one PDF, get one Excel workbook back. No storage, no party resolution.</td></tr>
+          <tr><td class="mono">analysisRouter</td><td class="mono">/api/analysis/*</td><td>The stateful lifecycle: create analysis, fetch by id, edit party/transaction overrides, list parties &amp; audit log, download per-module Excel.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sub-title">Notable libraries</h3>
+      <ul class="tight">
+        <li><code>pdfjs-dist</code> — PDF text-layer extraction.</li>
+        <li><code>tesseract.js</code> + <code>@napi-rs/canvas</code> — OCR path: canvas renders PDF pages to bitmaps (via <code>pdfjs-dist</code> again) for statements with no usable text layer, or for image uploads.</li>
+        <li><code>exceljs</code> — every Excel workbook the app produces.</li>
+        <li><code>multer</code> — multipart upload handling with a disk-storage backend.</li>
+        <li>Groq's chat-completions API, called with a raw <code>fetch</code> (no SDK) — optional LLM-assisted party-name resolution.</li>
+        <li><code>puppeteer-core</code> is a declared dependency and is <code>ssr</code>-externalized in <code>vite.config.ts</code>, and the README lists "Chrome or Edge (for master PDF export)" as a prerequisite — consistent with a headless-print PDF export path, but no call site for it was found in the files read this pass. Flagged as <strong>not enough evidence</strong> to describe precisely.</li>
+      </ul>
+
+      <h3 class="sub-title">Why this architecture makes sense</h3>
+      <p>This is an internally-used, moderate-traffic staff tool, not a public multi-tenant SaaS product. Running the API and the SSR app as one process removes an entire category of problems (CORS, two ports, two deploy targets, environment drift) that would otherwise exist for zero benefit at this scale. SQLite-via-driver-adapter mirrors the same instinct: the durable data is small, per-analysis, and doesn't need a managed database server — the explicit cost of that choice is that it doesn't horizontally scale across multiple instances without a shared volume for the `.db` file, which is an acceptable trade for an internal tool.</p>
+    </section>
+
+    <section class="sec" id="system-design">
+      <div class="sec-eyebrow">03</div>
+      <h2 class="sec-title">System design — request flow</h2>
+      <p class="lede">End-to-end path from dropping a PDF on <code>/upload</code> to seeing (and exporting) the party ledger.</p>
+
+      <ol class="flow-list">
+        <li><strong class="step-title">Upload</strong><div class="body"><code>upload.tsx</code> collects one row per file (password, "scanned" checkbox) and on submit builds a <code>FormData</code> with parallel <code>statement</code> / <code>passwords[]</code> / <code>scanned[]</code> fields, POSTed to <code>/api/analysis</code> (<code>lib/api.ts</code>'s <code>createAnalysis</code>).</div></li>
+        <li><strong class="step-title">Multer intake</strong><div class="body">Express's shared <code>statementUpload</code> (defined in <code>convert.routes.ts</code>, reused by <code>analysis.routes.ts</code>) streams each file to <code>server/uploads/&lt;uuid&gt;.&lt;ext&gt;</code>, preserving the original extension — the converter decides PDF-vs-OCR by extension, so a stripped extension would break that decision.</div></li>
+        <li><strong class="step-title">Extraction (per file)</strong><div class="body"><code>convertPdfToStatement()</code> picks a stage: <code>ocr</code> if the file is an image or was flagged "scanned," otherwise <code>pdf</code>. The <code>pdf</code> stage uses <code>pdfjs-dist</code> to pull text runs per page and clusters them into lines by Y-coordinate (±3px tolerance), sorted left-to-right within a line. The <code>ocr</code> stage renders each PDF page to a PNG via <code>@napi-rs/canvas</code> at 2.2× scale (or uses the image file directly) and runs it through a cached <code>tesseract.js</code> worker, reconstructing lines from Tesseract's block/paragraph/line/word geometry.</div></li>
+        <li><strong class="step-title">Silent OCR fallback</strong><div class="body">If the fast <code>pdf</code> path parses to zero transactions, the whole extraction is retried once as <code>ocr</code> — this is how a photocopied/scanned statement that was saved as an ordinary PDF (no real text layer) still gets read, without the user having to know to tick "scanned" themselves.</div></li>
+        <li><strong class="step-title">Row parsing</strong><div class="body"><code>parseStatement()</code> extracts account-info fields via label regexes, then parses transaction rows: a Bank-of-Baroda-layout check runs first (unconditionally), otherwise the generic date/amount-column heuristic parser runs; if <em>that</em> yields zero rows, four more specialized layout parsers are tried in order — Society Savings Compact → South Indian Bank → Society/Co-op → generic Columnar OCR.</div></li>
+        <li><strong class="step-title">Give up cleanly</strong><div class="body">Zero transactions after every fallback throws <code>NO_TRANSACTIONS_FOUND</code>, mapped to an HTTP 400 with a clear message rather than a generic 500.</div></li>
+        <li><strong class="step-title">Normalize &amp; classify</strong><div class="body"><code>analyzeBankStatements()</code> (<code>analysis/report.ts</code>) flattens every uploaded statement's transactions into one date-sorted list (<code>normalizeTransactions</code>), computing debit/credit/direction, a first-pass regex-based <code>party</code> guess, payment mode, and category per row, then builds month-by-month metrics (<code>buildMonthMetrics</code>).</div></li>
+        <li><strong class="step-title">Optional AI overlay</strong><div class="body"><code>applyAiPartyResolution()</code> can call Groq's chat-completions API (batched ≤60 rows / ≤45,000 JSON characters, with a recursive halving retry on batch failure) to layer <code>aiParty</code>, <code>aiCounterPartyLedger</code>, and <code>aiPartyConfidence</code> onto each transaction — an additional signal, not a replacement for the deterministic <code>party</code> field.</div></li>
+        <li><strong class="step-title">Store &amp; respond</strong><div class="body">The finished report is kept in an in-memory <code>Map</code> (<code>analysisStore.ts</code>) under a generated id like <code>PLA-2026-6117723</code>, and returned directly in the POST response — the report the client sees first is never re-fetched at this point, it's the same object just computed.</div></li>
+        <li><strong class="step-title">Analyzing screen</strong><div class="body">The client saves <code>{id, report}</code> into <code>analysis-report-store.ts</code> and navigates to <code>/analyzing</code>, which shows a fixed-cadence (650ms/step), purely cosmetic progress list — the real work already finished server-side — while it re-fetches <code>GET /api/analysis/:id</code> once to guarantee a fresh copy, then redirects to <code>/report</code>.</div></li>
+        <li><strong class="step-title">The one page</strong><div class="body"><code>/report</code> immediately redirects to <code>/report/transactions-summary</code> — the app's single real report screen, matching its "one-page" name. It renders <code>TransactionSummaryTable</code>, which runs <code>buildPartyLedger()</code> <em>client-side</em> (a parallel copy of the server's grouping logic, in <code>lib/transactionSummary.ts</code>) over the already-fetched transactions, so period-filter changes don't need another network round trip.</div></li>
+        <li><strong class="step-title">Manual correction</strong><div class="body">Renaming/merging/splitting/excluding a party or transaction calls one of the <code>PATCH</code>/<code>POST</code>/<code>DELETE /api/analysis/:id/...</code> endpoints. The server persists the override in SQLite (<code>partyOverrides.ts</code>), writes a <code>PartyAuditLog</code> row, re-applies every stored override onto the original in-memory report via <code>hydrateReport()</code>, and returns the updated report — which the client saves back into the store, and every subscribed screen re-renders via <code>useLatestReportVersion()</code>'s <code>useSyncExternalStore</code> hook.</div></li>
+        <li><strong class="step-title">Export</strong><div class="body"><code>ModuleExcelButton</code> calls <code>GET /api/analysis/:id/excel/:module[?period=monthly&amp;monthKey=...]</code>. The server re-hydrates the report, optionally scopes it to one calendar month (<code>scopeReportByMonth</code>), and <code>ExcelGeneratorService.generateModuleExcel()</code> builds the requested workbook (or every module combined, for the master report) and streams it back as an <code>.xlsx</code> with a generated client/bank/period filename.</div></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="technologies">
+      <div class="sec-eyebrow">04</div>
+      <h2 class="sec-title">Technologies</h2>
+
+      <h4 class="mini-title">Core</h4>
+      <div class="tablewrap"><table>
+        <tbody>
+          <tr><td class="mono">TypeScript</td><td>Primary language across frontend and backend.</td></tr>
+          <tr><td class="mono">React 19</td><td>UI layer.</td></tr>
+          <tr><td class="mono">TanStack Start / Router</td><td>File-based routing + SSR, built on Vite and h3.</td></tr>
+          <tr><td class="mono">Vite 7</td><td>Dev server, build, and the custom plugin that mounts the API.</td></tr>
+          <tr><td class="mono">Express 5</td><td>The API layer, mounted inside the same process.</td></tr>
+          <tr><td class="mono">h3</td><td>Node-middleware ⇄ Fetch adapter (<code>fromNodeMiddleware</code>) used to bridge Express into the SSR fetch handler.</td></tr>
+          <tr><td class="mono">Prisma 7 (<code>prisma-client</code>) + <code>@prisma/adapter-better-sqlite3</code></td><td>Override/audit persistence, no engine binary.</td></tr>
+          <tr><td class="mono">SQLite</td><td>Single-file database for overrides and audit log only.</td></tr>
+          <tr><td class="mono">ExcelJS</td><td>All 21+ report modules and the master workbook.</td></tr>
+          <tr><td class="mono">pdfjs-dist</td><td>Native PDF text-layer extraction.</td></tr>
+          <tr><td class="mono">tesseract.js + @napi-rs/canvas</td><td>OCR pipeline for scans/images.</td></tr>
+          <tr><td class="mono">Tailwind CSS v4</td><td>Styling.</td></tr>
+          <tr><td class="mono">Groq API</td><td>Optional LLM party-name resolution, called via raw <code>fetch</code>.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="mini-title">Supporting libraries</h4>
+      <div class="tablewrap"><table>
+        <tbody>
+          <tr><td class="mono">Radix UI primitives</td><td>Base of the local <code>components/ui</code> design system (dialog, popover, tabs, accordion, etc.).</td></tr>
+          <tr><td class="mono">lucide-react</td><td>Icon set.</td></tr>
+          <tr><td class="mono">framer-motion</td><td>Upload-row and progress-step animation.</td></tr>
+          <tr><td class="mono">recharts</td><td>Charting.</td></tr>
+          <tr><td class="mono">date-fns</td><td>Date utilities.</td></tr>
+          <tr><td class="mono">multer</td><td>Multipart upload handling.</td></tr>
+          <tr><td class="mono">cors</td><td>Present as a dependency; not confirmed wired into <code>createApp.ts</code> in the files read — same-origin by default design may make it unneeded.</td></tr>
+          <tr><td class="mono">cmdk</td><td>Powers the <code>Command</code> primitives behind <code>PartyPicker</code>'s searchable combobox.</td></tr>
+          <tr><td class="mono">clsx / tailwind-merge / class-variance-authority</td><td>The <code>cn()</code> utility stack behind every styled component.</td></tr>
+          <tr><td class="mono">zod, react-hook-form, @hookform/resolvers</td><td>Present as dependencies; not traced to an in-use form in the files read this pass — present but unconfirmed.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="mini-title">Boilerplate — present, but not resume-worthy claims</h4>
+      <ul class="tight">
+        <li>The rest of the shadcn/Radix primitive set that ships by default with the CLI but wasn't seen exercised in the files read (aspect-ratio, hover-card, menubar, navigation-menu, context-menu, toggle-group, slider, embla-carousel, vaul, input-otp, react-day-picker, react-resizable-panels) — scaffolding, not demonstrated expertise.</li>
+        <li><code>tw-animate-css</code> — utility classes only.</li>
+        <li><code>bunfig.toml</code> / <code>bun.lock</code> alongside <code>package-lock.json</code> — evidence the project has been run under both npm and Bun at different points, not a deliberate dual-package-manager design worth citing.</li>
+        <li><code>wrangler.jsonc</code> — a Cloudflare Workers config scaffold left over from the TanStack Start template; nothing in <code>vite.config.ts</code> or the npm scripts suggests the app is actually deployed there (the evidence points to Render instead). Don't claim Cloudflare Workers experience from this file's presence alone.</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="folders">
+      <div class="sec-eyebrow">05</div>
+      <h2 class="sec-title">Folder structure</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Path</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">frontend/src/routes/</td><td>File-based pages: <code>upload</code>, <code>analyzing</code>, <code>report</code> (+ nested <code>report.index</code>, <code>report.transactions-summary</code>), <code>__root</code>.</td></tr>
+          <tr><td class="mono">frontend/src/components/report/</td><td>Report-specific UI: table, party manager panel, party picker, period selector, Excel-download button, layout shell.</td></tr>
+          <tr><td class="mono">frontend/src/components/ui/</td><td>Local shadcn/ui-style design system on top of Radix primitives.</td></tr>
+          <tr><td class="mono">frontend/src/contexts/</td><td><code>PeriodContext</code> — yearly-vs-one-month view scope, shared across the report.</td></tr>
+          <tr><td class="mono">frontend/src/lib/</td><td>API client (<code>api.ts</code>), the live report store, client-side mirrors of a couple of server modules (<code>transactionSummary.ts</code>, <code>exportFilename.ts</code>), small date/period/chart utilities.</td></tr>
+          <tr><td class="mono">frontend/src/data/reportData.ts</td><td>The Proxy-based "live data" binding layer (see Engineering Decisions §6).</td></tr>
+          <tr><td class="mono">frontend/src/server.ts / start.ts</td><td>SSR entry points and error-handling middleware for TanStack Start.</td></tr>
+          <tr><td class="mono">frontend/server/</td><td>Kept outside <code>src/</code> deliberately so it can be <code>ssr: external</code>'d from the React/Vite bundle: <code>createApp.ts</code> (Express factory), <code>apiFetch.ts</code>/<code>requestOrigin.ts</code> (prod fetch adapter), <code>prisma/</code> (schema + migrations), <code>data/</code> (the live SQLite file + Tesseract's model cache — runtime state), <code>uploads/</code> (transient scratch space, wiped per request).</td></tr>
+          <tr><td class="mono">frontend/server/src/analysis/</td><td>Normalization, classification, entity resolution, month metrics, month-scoping, the LLM overlay.</td></tr>
+          <tr><td class="mono">frontend/server/src/converter/</td><td>PDF/OCR extraction and the bank-layout parser + fallback chain.</td></tr>
+          <tr><td class="mono">frontend/server/src/routes/</td><td>The two Express routers.</td></tr>
+          <tr><td class="mono">frontend/server/src/services/</td><td>Excel generation (3 files) and the party-override service.</td></tr>
+          <tr><td class="mono">frontend/server/src/storage/</td><td>The in-memory analysis store.</td></tr>
+          <tr><td class="mono">frontend/server/src/generated/prisma/</td><td>Committed Prisma Client output (custom <code>output</code> path in the schema).</td></tr>
+          <tr><td class="mono">frontend/dist/</td><td>Build output (client + server bundles).</td></tr>
+          <tr><td class="mono">scripts/ (repo root)</td><td>Standalone dev/debug utilities run via <code>tsx</code> — <code>benchmark-training-pdfs.mjs</code>, <code>debug-pdf.mjs</code>, <code>compare-namdar.mjs</code>, <code>compare-manual-vs-ai.mjs</code>, <code>inspect-manual.mjs</code>, <code>test-excel.ts</code> — used to test the parser/entity-resolution against real sample statements outside the running app.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="sec" id="files">
+      <div class="sec-eyebrow">06</div>
+      <h2 class="sec-title">Important files</h2>
+      <div class="card-grid">
+        <div class="card"><code class="file">frontend/vite.config.ts</code><p>Wires TanStack Start, the custom API plugin, Tailwind, and SSR externals together — the one file that defines "this is one integrated server."</p></div>
+        <div class="card"><code class="file">frontend/vite-plugin-api.ts</code><p>Dev/preview-only bridge that makes the Express API answer requests inside Vite's own server.</p></div>
+        <div class="card"><code class="file">frontend/server/apiFetch.ts + frontend/src/server.ts</code><p>The production equivalent: a Fetch-shaped entry point that tries the API first, then falls through to SSR, with shared error-normalization so a raw h3 500 never reaches the user.</p></div>
+        <div class="card"><code class="file">frontend/server/createApp.ts</code><p>The real Express app: two routers, a 10MB JSON limit, a catch-all handler that always responds <code>{code, message}</code>.</p></div>
+        <div class="card"><code class="file">frontend/server/prisma/schema.prisma</code><p>The only durable state in the system — and it's extensively self-documented in-file about <em>why</em> each table exists, better than any external doc could explain it.</p></div>
+        <div class="card"><code class="file">frontend/server/src/converter/parser.ts</code><p>The generic statement parser; its <code>parseStatement()</code> function at the bottom is the single place that encodes "try these five layouts, in this order."</p></div>
+        <div class="card"><code class="file">frontend/server/src/analysis/entityResolution.ts</code><p>The largest, most bespoke logic in the repo: rules-based counterparty extraction plus fuzzy canonicalization (Levenshtein + token similarity). The whole "party ledger" concept depends on this one file.</p></div>
+        <div class="card"><code class="file">frontend/server/src/analysis/groqPartyResolver.ts</code><p>The optional LLM layer — additive by design; the app still works fully with <code>GROQ_API_KEY</code> unset.</p></div>
+        <div class="card"><code class="file">frontend/server/src/services/partyOverrides.ts</code><p>Every manual edit a user can make, plus its audit trail. <code>hydrateReport()</code> is the join point between "what got auto-detected" and "what a human corrected."</p></div>
+        <div class="card"><code class="file">frontend/server/src/services/excelGenerator.ts</code><p>2,000+ lines, ~21 report modules plus a combined master workbook — the single biggest file in the repo, and the actual client-facing deliverable.</p></div>
+        <div class="card"><code class="file">frontend/src/lib/analysis-report-store.ts</code><p>The client's single source of truth for "the current report," built on <code>useSyncExternalStore</code>; almost every report screen subscribes to it.</p></div>
+        <div class="card"><code class="file">frontend/src/data/reportData.ts</code><p>The Proxy adapter that lets report components import what looks like static arrays/objects while always reading the live store underneath.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="components">
+      <div class="sec-eyebrow">07</div>
+      <h2 class="sec-title">Important components</h2>
+
+      <h3 class="sub-title">Backend</h3>
+      <div class="card-grid">
+        <div class="card"><h4>analyzeBankStatements()</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">analysis/report.ts</span><p>Orchestrates normalize → month metrics → shape into the final <code>AnalysisReport</code>.</p></div>
+        <div class="card"><h4>ExcelGeneratorService</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">services/excelGenerator.ts</span><p>One class, one method per module (<code>generateExecutiveSummary</code> … <code>generateTransactionsLedgerBook</code>); <code>generateModuleExcel(key, report)</code> is the public dispatch, <code>generateMasterReport()</code> composes all of them with an index sheet.</p></div>
+        <div class="card"><h4>buildPartyLedger()</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">analysis/entityResolution.ts</span><p>Single-pass party summary + grouping — explicitly merged from two separate O(n·uniqueParties) passes per its own doc comment, since both the table and every Excel module needed the same result.</p></div>
+        <div class="card"><h4>partyOverrides.ts functions</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">services/partyOverrides.ts</span><p><code>reassignTransaction(s)</code>, <code>resetTransaction</code>, <code>excludeTransaction</code>/<code>restoreTransaction</code>, <code>createParty</code>/<code>renameParty</code>/<code>deleteParty</code>, <code>hydrateReport</code> — the entire manual-correction feature as small, composable Prisma operations, each writing an audit-log row.</p></div>
+      </div>
+
+      <h3 class="sub-title">Frontend</h3>
+      <div class="card-grid">
+        <div class="card"><h4>ReportLayout</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">components/report/ReportLayout.tsx</span><p>Shell for every <code>/report/*</code> page — header, applicant/account strip, <code>PeriodSelector</code>, and the effect that re-fetches the report if the client landed on the URL without a warm cache.</p></div>
+        <div class="card"><h4>TransactionSummaryTable</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">components/report/TransactionSummaryTable.tsx</span><p>The actual "one page" deliverable: groups transactions by resolved party, expandable per-party detail, per-row edit/move/exclude, bulk-move a selection.</p></div>
+        <div class="card"><h4>PartyManagerPanel</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">components/report/PartyManagerPanel.tsx</span><p>A deliberately <em>non-modal</em> side sheet (so the table stays usable underneath) for party-level operations: create/rename/delete with three delete strategies, plus a restore list for excluded transactions.</p></div>
+        <div class="card"><h4>PartyPicker</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">components/report/PartyPicker.tsx</span><p>One searchable "assign to party" combobox, shared by three call sites: per-row action, bulk bar, and the manager panel.</p></div>
+        <div class="card"><h4>PeriodContext / PeriodSelector</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">contexts/PeriodContext.tsx</span><p>Client-side yearly-vs-one-month view scoping, persisted to <code>localStorage</code>, mirroring the server's own <code>scopeReportByMonth</code>.</p></div>
+        <div class="card"><h4>useScopedReport</h4><span class="mono file" style="font-size:11px;color:var(--text-faint)">hooks/useScopedReport.ts</span><p>Derives every dashboard-style figure (MoM summary, cash flow, salary, bounces, etc.) from the live proxied data, re-sliced by the current period scope.</p></div>
+      </div>
+    </section>
+
+    <section class="sec" id="decisions">
+      <div class="sec-eyebrow">08</div>
+      <h2 class="sec-title">Engineering decisions</h2>
+
+      <div class="decision">
+        <h3>1 · In-memory analysis store, SQLite only for overrides</h3>
+        <dl>
+          <dt>Problem</dt><dd>Need somewhere to hold a freshly computed report so later GET/PATCH calls can find it by id, plus durable storage for human corrections.</dd>
+          <dt>Approach</dt><dd>A module-level <code>Map&lt;string, AnalysisRecord&gt;</code> holds the report; Prisma/SQLite is used only for <code>Party</code>/<code>TransactionAssignment</code>/<code>PartyAuditLog</code>.</dd>
+          <dt>Alternatives</dt><dd>Persist the whole report JSON to Postgres/SQLite too; use Redis or a job queue for multi-instance durability.</dd>
+          <dt>Trade-off</dt><dd>Simplest possible build for a single-instance internal tool — but report data doesn't survive a restart or scale past one instance, and the <code>Map</code> has no eviction, so it grows for the life of the process.</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>2 · Bank-agnostic heuristic parser with layout-specific fallbacks</h3>
+        <dl>
+          <dt>Problem</dt><dd>Dozens of Indian banks format statements differently, and some only ever appear as scans.</dd>
+          <dt>Approach</dt><dd>One generic geometry/regex parser for "well-behaved" tabular PDFs, with a short ordered list of specialized parsers (Bank of Baroda, two OCR-only cooperative/society layouts, South Indian Bank, generic columnar-OCR) tried only when the generic one returns zero rows.</dd>
+          <dt>Alternatives</dt><dd>A parser-per-bank registry keyed by detected bank name; a fully ML/LLM-based table extractor.</dd>
+          <dt>Trade-off</dt><dd>Keeps the common case fast and free of an LLM call, while still covering known problem layouts — but a new unusual bank layout means writing a new bespoke parser file, and the fallback order is a hand-maintained if/else chain, not a scored/pluggable registry.</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>3 · Deterministic entity resolution by default, LLM as an optional overlay</h3>
+        <dl>
+          <dt>Problem</dt><dd>A bank narration string is inherently messy (OCR noise, UPI VPA suffixes, bank/rail codes, boilerplate); resolving "the real counterparty" is a fuzzy problem.</dd>
+          <dt>Approach</dt><dd>A large, carefully tuned rules engine does extraction + Levenshtein/token-similarity clustering entirely offline; <code>groqPartyResolver.ts</code> optionally asks an LLM for a second opinion, merged in as separate <code>aiParty</code>/<code>aiCounterPartyLedger</code>/<code>aiPartyConfidence</code> fields, never a replacement.</dd>
+          <dt>Alternatives</dt><dd>LLM-only extraction; a supervised classifier trained on labeled narrations.</dd>
+          <dt>Trade-off</dt><dd>Works fully offline/free with no API key, and every result is reproducible and debuggable — at the cost of a large hand-maintained surface (noise-word sets, merchant alias lists, bank-code maps) that needs updating whenever a new pattern shows up in real statements.</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>4 · Overrides layered on top of, never baked into, the auto-detected report</h3>
+        <dl>
+          <dt>Problem</dt><dd>A user must be able to correct a wrong party grouping without losing the ability to reset back to what the algorithm originally said.</dd>
+          <dt>Approach</dt><dd><code>TransactionAssignment.originalParty</code> snapshots the auto-detected label the first time a transaction is touched; <code>hydrateReport()</code> applies only <code>customParty</code>/<code>excludedFromLedger</code> on top of an otherwise-untouched base report on every read, instead of mutating the report in place.</dd>
+          <dt>Alternatives</dt><dd>Mutate the in-memory report directly on every edit; store a full "final" report snapshot per edit.</dd>
+          <dt>Trade-off</dt><dd>Clean undo/reset and an accurate audit "before" value, at the cost of re-running the hydrate join on every single report read (cheap here, but assumes both the base report and its override count stay small).</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>5 · Party-grouping logic duplicated between server and client</h3>
+        <dl>
+          <dt>Problem</dt><dd>The on-screen summary table needs to group/label parties identically to the Excel exports, without round-tripping to the server on every render or filter change.</dd>
+          <dt>Approach</dt><dd>The client ships its own copy of the grouping/canonicalization logic (<code>lib/transactionSummary.ts</code>, structurally near-identical to the server's <code>entityResolution.ts</code>) and re-runs it locally over the transactions already embedded in the fetched report.</dd>
+          <dt>Alternatives</dt><dd>Have the server pre-compute the grouped summary and send only that; extract a shared package used by both.</dd>
+          <dt>Trade-off</dt><dd>Fast, dependency-free re-grouping when the period filter changes — at the cost of two copies of genuinely complex fuzzy-matching logic that have to be kept in sync by hand, with no shared module boundary enforcing it.</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>6 · A "live proxy" data layer instead of prop-drilling or a state library</h3>
+        <dl>
+          <dt>Problem</dt><dd>Many report components need read access to the current analysis report, and appear (from the code's shape) to have first been built against fixed-shape data.</dd>
+          <dt>Approach</dt><dd><code>data/reportData.ts</code> exports every "data" binding (<code>applicant</code>, <code>momSummary</code>, <code>transactions</code>, …) as a <code>Proxy</code> that transparently reads the live report out of <code>analysis-report-store.ts</code> on every property access — components import what looks like a static value but always read live state.</dd>
+          <dt>Alternatives</dt><dd>React context or a Redux/Zustand store threaded through every component; refactor every component to take the report as a prop.</dd>
+          <dt>Trade-off</dt><dd>Lets many components stay decoupled from prop-drilling without a state-management dependency — at the cost of a genuinely unusual "magic import" pattern a new contributor has to discover, and an ESLint exhaustive-deps suppression anywhere it's read inside <code>useMemo</code>/<code>useEffect</code> (confirmed, commented, in <code>report.transactions-summary.tsx</code>) since the real dependency is a version counter, not the proxy reference itself.</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>7 · Only an id, never the full report, survives a hard reload</h3>
+        <dl>
+          <dt>Problem</dt><dd>Keep report state simple across in-session navigation, without silently serving a stale full-report blob after a hard refresh.</dd>
+          <dt>Approach</dt><dd><code>saveLatestReport</code> keeps the full report only in a module-level JS variable; the <code>localStorage</code> write is just the analysis id. A hard reload always finds an empty in-memory report and re-fetches the full report via <code>GET /api/analysis/:id</code>.</dd>
+          <dt>Alternatives</dt><dd>Cache the full report JSON in <code>localStorage</code>/IndexedDB for true offline reloads.</dd>
+          <dt>Trade-off</dt><dd>Always-fresh data after any server-side edit, and no localStorage size/staleness problem — at the cost of a network round trip on every hard refresh, and total data loss if the server process restarted and the in-memory store lost that id (compounding decision #1).</dd>
+        </dl>
+      </div>
+
+      <div class="decision">
+        <h3>8 · Cosmetic fixed-cadence progress UI, not real server progress</h3>
+        <dl>
+          <dt>Problem</dt><dd>Statement analysis (parse + OCR fallback + optional LLM call) can take anywhere from ~1s to tens of seconds, but <code>POST /api/analysis</code> is one synchronous request/response with no streaming channel.</dd>
+          <dt>Approach</dt><dd>The client already has (or fetches once) the finished report; <code>/analyzing</code>'s step list advances on a fixed 650ms <code>setInterval</code> purely for perceived progress, capped at the last step once the real fetch resolves.</dd>
+          <dt>Alternatives</dt><dd>SSE/WebSocket progress events from the conversion pipeline; a polling job-status endpoint.</dd>
+          <dt>Trade-off</dt><dd>Much simpler than real progress plumbing, and good enough since the upload step already blocks on the real work — but the visible "% complete" is cosmetic, so it can't tell a user <em>why</em> a genuinely slow OCR run is slow.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="security">
+      <div class="sec-eyebrow">09</div>
+      <h2 class="sec-title">Security</h2>
+
+      <h3 class="sub-title">Mechanisms in place</h3>
+      <ul class="tight">
+        <li><strong>Upload allowlisting</strong> — <code>multer</code>'s <code>fileFilter</code> accepts only PDF/JPG/PNG/TIFF (by mimetype or extension), capped at 25MB.</li>
+        <li><strong>No persistent raw uploads</strong> — files are written under a random UUID filename (never the user-supplied name) and deleted in a <code>finally</code> block after every request, success or failure.</li>
+        <li><strong>Explicit password-error handling</strong> — <code>pdfjs-dist</code>'s <code>PasswordException</code> is mapped to clear <code>PASSWORD_REQUIRED</code>/<code>INVALID_PASSWORD</code> codes rather than surfacing a raw parser crash.</li>
+        <li><strong>No leaked internals</strong> — a single catch-all Express error handler normalizes every thrown error to <code>{code, message}</code>, and the production SSR path explicitly replaces h3's default JSON error body / stack trace with a generic branded error page, logging the real error server-side only.</li>
+      </ul>
+
+      <h3 class="sub-title">Gaps — evidenced, not assumed</h3>
+      <ul class="tight">
+        <li><strong>No authentication anywhere in this code.</strong> Any request to <code>/api/analysis/:id/*</code> only needs the id string. The Prisma schema itself says outright that "this sub-app has no auth/session concept yet" (the unused <code>actor</code> field on <code>PartyAuditLog</code>). Since this is mounted behind a staff portal, real auth may exist one level up — not enough evidence in this codebase to say either way.</li>
+        <li><strong>No rate limiting</strong> on <code>/api/analysis</code> or <code>/api/convert</code>, both of which do CPU-heavy work (PDF parsing, OCR, an external LLM call) per request.</li>
+        <li><strong>Guessable analysis ids</strong> — <code>PLA-&lt;year&gt;-&lt;last 7 digits of Date.now()&gt;</code> is sequential, not cryptographically random; combined with no auth, a recent analysis id is enumerable.</li>
+        <li><strong>Unbounded in-memory store</strong> — the <code>analysisStore</code> <code>Map</code> never evicts; every analysis, completed or failed, stays in server memory for the life of the process (a resource-exhaustion surface under sustained use, not just a hygiene nit).</li>
+        <li><strong>Ad hoc <code>.env</code> discovery</strong> — <code>groqPartyResolver.ts</code>'s <code>readEnvFile()</code> walks up to two parent directories looking for a <code>.env</code> file rather than relying solely on <code>process.env</code>; worth confirming this can't pick up an unintended file in a shared hosting layout.</li>
+        <li><strong>No centralized request-schema validation</strong> on the party-management endpoints — just ad hoc <code>typeof x === "string"</code> checks. Reasonably safe since Prisma parameterizes queries, but <code>zod</code> (a declared dependency) isn't used here.</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="performance">
+      <div class="sec-eyebrow">10</div>
+      <h2 class="sec-title">Performance</h2>
+
+      <h3 class="sub-title">Optimizations that exist</h3>
+      <ul class="tight">
+        <li><code>buildPartyLedger()</code> explicitly merges what used to be two separate O(n·uniqueParties) fuzzy-clustering passes into one, per its own comment — both the on-screen table and every Excel module were doing that expensive work twice.</li>
+        <li>OCR is cached and reused: Tesseract's model data is cached to disk (<code>server/data/tesseract-cache</code>) and the worker is created once (module-level <code>workerPromise</code>), not per request.</li>
+        <li>The Groq call is batched (≤60 rows or ≤45,000 JSON characters per request) instead of one HTTP call per transaction, with a recursive halving retry so one bad row doesn't fail an entire batch.</li>
+        <li>OCR (the expensive path) only runs when needed: explicitly scanned files, image files, or a PDF that parsed to zero transactions on the fast text-layer path.</li>
+        <li>The client re-derives the grouped party summary locally instead of round-tripping to the server on every period-filter change.</li>
+      </ul>
+
+      <h3 class="sub-title">Likely bottlenecks (inferred from code, not measured)</h3>
+      <ul class="tight">
+        <li><code>generateMasterReport()</code> runs all ~21 module generators sequentially, synchronously, in one request — a large statement produces a very large workbook with no evidence of streaming or background job handling.</li>
+        <li>The unbounded in-memory <code>analysisStore</code> is also a performance concern over long uptime, not just a security one (see above).</li>
+        <li><code>pickCanonicalLabel()</code> compares every unique auto-detected party label against every other (Levenshtein + token similarity) — quadratic in the number of <em>unique</em> party names, usually small relative to transaction count but growable on a very high-diversity statement.</li>
+        <li>OCR runs page-by-page sequentially (<code>await</code> inside a <code>for</code> loop in <code>extractScannedFile</code>), not in parallel — a multi-page scanned statement is proportionally slow.</li>
+        <li>No caching by file hash — re-uploading an identical statement re-runs the entire parse/OCR/LLM pipeline from scratch.</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="interview">
+      <div class="sec-eyebrow">11</div>
+      <h2 class="sec-title">Interview questions</h2>
+      <ol class="qa-list">
+        <li>Walk me through what happens, end to end, between a user dropping a PDF on the upload page and seeing the party ledger table.</li>
+        <li>Why does the Express API run inside the same Vite/TanStack Start process instead of as a separate service? What would splitting them require?</li>
+        <li>The parser tries a generic layout first, then falls back through five specialized parsers. How would you add a sixth bank layout without breaking the existing fallback order?</li>
+        <li>Why does the app retry a PDF as OCR only when the fast path finds zero transactions, instead of always OCR'ing as a safety net?</li>
+        <li>Explain the difference between <code>party</code>, <code>aiParty</code>, and <code>customParty</code> on a transaction. Which one actually wins for display, and why?</li>
+        <li>Entity resolution has separate concepts of "extraction" and "canonicalization." Why can't one function do both?</li>
+        <li><code>isNamePartialVariant</code> requires an exact match on the first name token before treating two labels as the same person. What bug does that guard prevent?</li>
+        <li>Why is the Groq-based resolver designed to only ever <em>add</em> fields to a transaction rather than overwrite the deterministic result?</li>
+        <li>Walk through <code>Party</code> / <code>TransactionAssignment</code> / <code>PartyAuditLog</code>. Why is <code>originalParty</code> a plain string snapshot instead of a foreign key?</li>
+        <li>What are the three <code>onDelete</code> strategies for deleting a party, and when would you pick each?</li>
+        <li>The report lives in memory while overrides live in SQLite. Why split storage that way, and what breaks on a server restart?</li>
+        <li><code>hydrateReport()</code> re-applies every override on every single read instead of mutating the report once. What does that buy you, and what does it cost?</li>
+        <li><code>reportData.ts</code> exports things like <code>momSummary</code> as Proxy objects instead of plain values. What problem does that solve, and what's the cost for a new engineer reading this code?</li>
+        <li>The client keeps its own full copy of the party-grouping logic instead of asking the server. What's the risk, and how would you remove it?</li>
+        <li>How would you add authentication today, given analysis ids are currently the only access control?</li>
+        <li>If this needed to run on more than one server instance, what's the first thing in this codebase that breaks — and how would you fix it?</li>
+      </ol>
+    </section>
+
+    <section class="sec" id="star">
+      <div class="sec-eyebrow">12</div>
+      <h2 class="sec-title">STAR story</h2>
+      <dl class="star-grid">
+        <dt>Situation</dt><dd>Staff reviewing Indian bank statements for loan/credit or accountancy due-diligence work had to manually read PDFs — often scanned, password-protected, or laid out differently by different banks — to build a party-wise ledger of who paid whom, a slow and inconsistent process across statements and staff.</dd>
+        <dt>Task</dt><dd>Build an internal tool that takes any statement (native PDF, scanned PDF, or a photographed/scanned image) from any Indian bank, automatically resolves every transaction's real counterparty despite messy narration text (UPI handles, OCR noise, bank reference codes, boilerplate), and produces both an interactive on-screen ledger and a full set of CA-standard Excel reports a human can still correct before finalizing.</dd>
+        <dt>Action</dt><dd>I designed a layered pipeline: a bank-agnostic geometry/heuristic PDF parser with a Tesseract OCR fallback for scans, plus five specialized fallback parsers for known problem layouts; a deterministic entity-resolution engine that strips banking boilerplate and reference codes, scores candidate counterparties per narration segment, and clusters near-duplicate labels using Levenshtein distance and token similarity, entirely offline; an optional LLM overlay (Groq) that proposes a second-opinion normalized name/category per transaction, merged in rather than trusted blindly; a Prisma/SQLite override layer so a human can rename, merge, split, or exclude parties/transactions afterward with a full audit trail, without ever losing the original auto-detected label; and a 21-module Excel export engine (Flags &amp; Risk, CAM Analysis, Bounce &amp; Penal, Loans &amp; EMI, Salary, Trade Credits/Debits, Circular Flows, and more) plus a combined master workbook.</dd>
+        <dt>Result</dt><dd>A single upload flow now takes a statement — in whatever condition it arrives in, from any of several Indian banks — straight to a corrected, exportable party ledger and a full CA report pack, with every manual correction preserved and auditable, and the core pipeline working fully standalone with no external API dependency, with the LLM step as a purely additive enhancement on top. <em>(No measured time/cost-savings figures are in evidence — this states delivered capability, not a claimed metric.)</em></dd>
+      </dl>
+    </section>
+
+    <section class="sec" id="resume">
+      <div class="sec-eyebrow">13</div>
+      <h2 class="sec-title">Resume summary</h2>
+      <div class="resume-box">
+        RMH.PLA — Party Ledger Analyzer: full-stack internal tool (React 19 / TanStack Start SSR + Express 5 API in one Node process, Prisma/SQLite) that converts Indian bank statements — PDF, password-protected, or scanned/photographed — into a party-wise transaction ledger. Built a bank-agnostic PDF/OCR extraction pipeline (pdfjs-dist + Tesseract.js) with layout-specific fallback parsers for non-standard bank formats, and a deterministic entity-resolution engine (regex-based extraction, Levenshtein/token-similarity clustering) that resolves messy narration text — UPI/NEFT/RTGS references, OCR noise — into canonical counterparties, cross-checked against an optional LLM (Groq) as an additive signal. Added a durable override layer (create/rename/merge/exclude parties and transactions with full audit history) and a 21-module CA-grade Excel export engine (cash flow, EMI/bounce tracking, salary, trade credit/debit, circular-flow detection, master report).
+      </div>
+    </section>
+
+    <section class="sec" id="concepts">
+      <div class="sec-eyebrow">14</div>
+      <h2 class="sec-title">Concepts demonstrated</h2>
+
+      <div class="decision">
+        <h3>Integrated SSR + API server via a custom Vite plugin</h3>
+        <p><strong>Where:</strong> the entire request-routing layer. <strong>File:</strong> <code>frontend/vite-plugin-api.ts</code>, <code>frontend/vite.config.ts</code>.</p>
+        <p>A Vite plugin hooks <code>configureServer</code>/<code>configurePreviewServer</code> to mount an entirely separate framework (Express) as middleware inside Vite's own dev and preview servers, so one <code>npm run dev</code> serves both the SPA/SSR app and a REST API on the same origin and port. This is the mechanism that lets the rest of the app pretend "frontend" and "backend" are the same server, which they are, at runtime.</p>
+        <p><em>Interview angle:</em> Why mount Express as Vite middleware instead of a Vite proxy to a second process? What's different between the dev-time plugin path and the prod fetch-handler path?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Node-middleware ⇄ Fetch API adapter pattern</h3>
+        <p><strong>Where:</strong> production request handling. <strong>File:</strong> <code>frontend/server/apiFetch.ts</code> (h3's <code>fromNodeMiddleware</code>), <code>frontend/src/server.ts</code>.</p>
+        <p>Modern SSR runtimes (TanStack Start's server entry) speak the standard Fetch API (<code>Request</code>/<code>Response</code>), while Express is built on Node's older <code>(req, res, next)</code> middleware signature. <code>h3</code>'s adapter bridges the two, letting the same Express app that runs as Connect middleware in dev also answer <code>fetch</code>-shaped requests in the production handler.</p>
+        <p><em>Interview angle:</em> What does <code>fromNodeMiddleware</code> actually have to translate between the two calling conventions (streaming body, headers, status)?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Driver-adapter Prisma (no query-engine binary)</h3>
+        <p><strong>Where:</strong> database access. <strong>File:</strong> <code>frontend/server/src/lib/prisma.ts</code>, <code>frontend/server/prisma/schema.prisma</code>.</p>
+        <p>Prisma 7's <code>prisma-client</code> generator plus <code>@prisma/adapter-better-sqlite3</code> replaces the classic Prisma architecture (a separate Rust query-engine binary the Node process talks to over a pipe) with a pure-JS driver adapter wrapping <code>better-sqlite3</code> directly — fewer moving parts to deploy, at the cost of being newer/less battle-tested than the classic engine.</p>
+        <p><em>Interview angle:</em> What problem do Prisma driver adapters solve relative to the classic query-engine architecture?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Layered fallback parsing strategy</h3>
+        <p><strong>Where:</strong> statement-to-transactions parsing. <strong>File:</strong> <code>frontend/server/src/converter/parser.ts</code>.</p>
+        <p>Rather than a single "smart" parser or a full per-bank config system, one generic geometry/regex parser handles the common case, and a short, explicitly ordered chain of specialized parsers is tried only when the generic pass returns nothing — a simple, debuggable strategy pattern implemented as a plain if/else chain instead of a formal interface.</p>
+        <p><em>Interview angle:</em> Why check Bank of Baroda's layout unconditionally, first, rather than as a zero-result fallback like the other four?</p>
+      </div>
+
+      <div class="decision">
+        <h3>OCR pipeline with PDF-to-raster rendering</h3>
+        <p><strong>Where:</strong> scanned-statement support. <strong>File:</strong> <code>frontend/server/src/converter/tesseractExtractor.js</code>.</p>
+        <p>A PDF with no usable text layer is rendered page-by-page to a bitmap (via <code>pdfjs-dist</code>'s canvas rendering + <code>@napi-rs/canvas</code>, a native binding, at 2.2× scale for legibility) and each page image is fed to a persistent, cached Tesseract worker, whose block/paragraph/line/word geometry is reassembled into the same line-based shape the native-text extractor produces — so everything downstream (the parser) doesn't know or care which extraction path ran.</p>
+        <p><em>Interview angle:</em> Why 2.2× render scale specifically, and what would happen to OCR accuracy at 1×?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Deterministic, rules-based entity extraction</h3>
+        <p><strong>Where:</strong> turning a narration string into a counterparty name. <strong>File:</strong> <code>frontend/server/src/analysis/classification.ts</code>, <code>entityResolution.ts</code>.</p>
+        <p>A cascade of regex-driven checks (known merchant aliases, bank-event patterns, self-transfer patterns, UPI-hyphen parsing, cash-deposit parsing, SI-mandate parsing) each score a candidate counterparty and confidence; the highest-confidence result wins. This is essentially hand-built lightweight NLP for one narrow domain, not a generic NLP library.</p>
+        <p><em>Interview angle:</em> Why compute a confidence score at all if the pipeline is fully deterministic — what is it actually used for downstream?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Fuzzy string clustering (Levenshtein + token similarity)</h3>
+        <p><strong>Where:</strong> merging OCR-mangled or partial-name variants of the same party. <strong>File:</strong> <code>analysis/entityResolution.ts</code> (<code>pickCanonicalLabel</code>, <code>isNamePartialVariant</code>, <code>tokensMatch</code>).</p>
+        <p>After extraction, raw party labels are clustered by exact key match, token-set similarity, single-token aliasing, and a same-first-token partial-name check with edit-distance tolerance — hand-rolled, not a library — to decide, e.g., that "ZEENAT RAMZAN HASNANI" and "MR RAMZAN HASNANI" are the same person without ever merging two different people who merely share a first name.</p>
+        <p><em>Interview angle:</em> Walk through why the first-token-exact-match guard in <code>isNamePartialVariant</code> exists.</p>
+      </div>
+
+      <div class="decision">
+        <h3>LLM-as-overlay integration pattern</h3>
+        <p><strong>Where:</strong> optional AI-assisted party naming. <strong>File:</strong> <code>analysis/groqPartyResolver.ts</code>, <code>routes/analysis.routes.ts</code> (<code>applyAiPartyResolution</code>).</p>
+        <p>The LLM call is batched, retried by recursive halving on failure, and its output is written into <em>separate</em> fields (<code>aiParty</code>, <code>aiCounterPartyLedger</code>, <code>aiPartyConfidence</code>) rather than overwriting the deterministic <code>party</code> field — a pattern that keeps a probabilistic, external, rate-limited dependency strictly additive to a system that must keep working without it.</p>
+        <p><em>Interview angle:</em> What would go wrong if the Groq response overwrote <code>party</code> directly instead of being stored separately?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Snapshot-based override / undo data model</h3>
+        <p><strong>Where:</strong> the manual-correction feature. <strong>File:</strong> <code>prisma/schema.prisma</code> (<code>TransactionAssignment.originalParty</code>), <code>services/partyOverrides.ts</code>.</p>
+        <p>The very first time a transaction is touched, its current auto-detected label is copied into a plain string field. Every later "reset" or "reassign to original" reads that snapshot instead of re-deriving it — a simple, robust undo mechanism that doesn't depend on the auto-detection algorithm being deterministic or stable over time.</p>
+        <p><em>Interview angle:</em> Why snapshot a plain string here instead of just re-running the extraction function on demand to "recompute" the original party?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Audit logging as a first-class side effect</h3>
+        <p><strong>Where:</strong> every mutation in the party-override system. <strong>File:</strong> <code>services/partyOverrides.ts</code> (<code>logAudit</code>), <code>PartyAuditLog</code> model.</p>
+        <p>Every create/rename/delete/reassign/exclude/restore operation writes a before/after <code>PartyAuditLog</code> row in the same function that performs the mutation, rather than as a separate cross-cutting concern — simple, but means the audit trail is only as complete as each function remembering to call <code>logAudit</code>.</p>
+        <p><em>Interview angle:</em> What are the risks of implementing audit logging this way versus, say, a database trigger or event-sourcing approach?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Idempotent hydrate/projection pattern</h3>
+        <p><strong>Where:</strong> merging overrides onto the base report. <strong>File:</strong> <code>services/partyOverrides.ts</code> (<code>hydrateReport</code>).</p>
+        <p>Instead of mutating the stored report as edits happen, every read re-derives a "view" by applying the full current set of <code>TransactionAssignment</code> rows onto an untouched copy of the base report. This is the same idea as a projection in event sourcing, at a much smaller scale — the base data plus a set of changes, recombined on demand.</p>
+        <p><em>Interview angle:</em> What would you need to add to make this scale if a report had a very large override count?</p>
+      </div>
+
+      <div class="decision">
+        <h3>Proxy-based reactive data binding</h3>
+        <p><strong>Where:</strong> connecting "static-looking" imports to live client state. <strong>File:</strong> <code>src/data/reportData.ts</code>.</p>
+        <p>JavaScript <code>Proxy</code> get-traps intercept every property access on an exported "data" object and redirect it to a live lookup into the report store — letting existing component code that imports <code>momSummary</code> or <code>transactions</code> keep working unchanged while the underlying data source moved from static fixtures to a real API. A genuinely unusual pattern worth understanding deeply if you inherit this codebase.</p>
+        <p><em>Interview angle:</em> What are the risks of a Proxy-based data layer versus explicit props or a context hook?</p>
+      </div>
+
+      <div class="decision">
+        <h3>External-store subscription via <code>useSyncExternalStore</code></h3>
+        <p><strong>Where:</strong> the client's report cache. <strong>File:</strong> <code>src/lib/analysis-report-store.ts</code>.</p>
+        <p>React's <code>useSyncExternalStore</code> subscribes components to a plain module-level variable (not Redux/Zustand/Context) via a simple listener-set + version-counter, which is exactly the API React ships for bridging non-React state into the render cycle correctly (including concurrent rendering).</p>
+        <p><em>Interview angle:</em> Why <code>useSyncExternalStore</code> instead of a custom <code>useEffect</code> + <code>useState</code> subscription?</p>
+      </div>
+
+      <div class="decision">
+        <h3>File-based routing with a redirect-only index</h3>
+        <p><strong>Where:</strong> the report section's URL structure. <strong>File:</strong> <code>src/routes/report.index.tsx</code>, <code>report.transactions-summary.tsx</code>, <code>report.tsx</code>.</p>
+        <p><code>/report</code> itself renders nothing — it immediately <code>redirect()</code>s to <code>/report/transactions-summary</code>, the single real page, while the shared <code>report.tsx</code> layout route provides the header/period-selector shell every nested page renders inside via <code>&lt;Outlet /&gt;</code>. A deliberately thin routing layer for what is, by name and design, a one-page report.</p>
+        <p><em>Interview angle:</em> Why keep <code>/report</code> as a real (redirecting) route instead of just linking to <code>/report/transactions-summary</code> directly everywhere?</p>
+      </div>
+    </section>
+
+    <section class="sec" id="db">
+      <div class="sec-eyebrow">15</div>
+      <h2 class="sec-title">Database entries — ready to paste</h2>
+
+      <h3 class="sub-title">A. Projects sheet</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Name</td><td>RMH.PLA — Party Ledger Analyzer</td></tr>
+          <tr><td>One-liner</td><td>Converts Indian bank statements (PDF, scanned, or image) into an editable, exportable party-wise transaction ledger.</td></tr>
+          <tr><td>Repo</td><td class="mono">one-page-party-analysis (in CA-RMHStaffPortal monorepo)</td></tr>
+          <tr><td>Type</td><td>Internal staff tool, mounted as a sub-app inside a larger staff portal</td></tr>
+          <tr><td>Stack tags</td><td class="mono">react, tanstack-start, express, prisma, sqlite, exceljs, pdfjs, tesseract, groq-llm</td></tr>
+          <tr><td>Status</td><td>Actively developed (recent commits: Prisma migration on unified boot, OCR env var, party management, GST/parser reconciliation fixes)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sub-title">B. Tech &amp; architecture sheet</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Frontend framework</td><td class="mono">React 19 + TanStack Start/Router</td><td>SSR, file-based routing</td></tr>
+          <tr><td>Styling</td><td class="mono">Tailwind CSS v4 + Radix UI</td><td>Local shadcn-style design system</td></tr>
+          <tr><td>API layer</td><td class="mono">Express 5</td><td>Mounted in-process via Vite plugin (dev) / h3 fetch adapter (prod)</td></tr>
+          <tr><td>Database</td><td class="mono">SQLite + Prisma 7 driver adapter</td><td>Party/override/audit persistence only</td></tr>
+          <tr><td>Report data</td><td class="mono">In-memory Map</td><td>Computed analysis reports (not persisted to DB)</td></tr>
+          <tr><td>PDF parsing</td><td class="mono">pdfjs-dist</td><td>Native text-layer extraction</td></tr>
+          <tr><td>OCR</td><td class="mono">tesseract.js + @napi-rs/canvas</td><td>Scanned statement / image fallback</td></tr>
+          <tr><td>Export</td><td class="mono">ExcelJS</td><td>21+ CA-style report modules + master workbook</td></tr>
+          <tr><td>AI overlay</td><td class="mono">Groq chat-completions API</td><td>Optional second-opinion party normalization</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sub-title">C. Engineering decisions sheet</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Decision</th><th>Why</th><th>Trade-off</th></tr></thead>
+        <tbody>
+          <tr><td>In-memory report store, SQLite for overrides only</td><td>Simplest build for a single-instance internal tool</td><td>No durability across restarts; no multi-instance scaling</td></tr>
+          <tr><td>Generic parser + 5 layout-specific fallbacks</td><td>Cover known problem bank layouts without an LLM call on the common path</td><td>New layouts need a new bespoke file; fallback order is hand-maintained</td></tr>
+          <tr><td>Deterministic entity resolution, LLM additive only</td><td>Works offline/free, fully debuggable</td><td>Large hand-maintained word/alias lists to keep current</td></tr>
+          <tr><td>Overrides layered via snapshot + hydrate, never mutate base</td><td>Clean undo/reset and accurate audit trail</td><td>Recomputes the join on every read</td></tr>
+          <tr><td>Party-grouping logic duplicated client/server</td><td>Instant re-grouping on filter change, no round trip</td><td>Two copies of complex logic to keep in sync by hand</td></tr>
+          <tr><td>Proxy-based "live" data layer</td><td>Keeps components decoupled without prop-drilling or a state library</td><td>Unusual pattern; ESLint deps must be manually reasoned about</td></tr>
+          <tr><td>Only an id persists across hard reloads</td><td>Guarantees fresh data after any server-side edit</td><td>Network round trip on every reload; data lost if server restarted</td></tr>
+          <tr><td>Cosmetic fixed-cadence progress bar</td><td>Simple, good enough since upload already blocks on real work</td><td>Can't reflect or explain genuinely slow runs</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sub-title">D. STAR sheet</h3>
+      <div class="tablewrap"><table>
+        <tbody>
+          <tr><td class="mono">Situation</td><td>Staff manually building party ledgers from inconsistent, sometimes scanned, Indian bank statement PDFs — slow and inconsistent across statements and staff.</td></tr>
+          <tr><td class="mono">Task</td><td>Automate extraction (including OCR) and counterparty resolution for any Indian bank statement, while keeping a human-correctable, auditable, exportable output.</td></tr>
+          <tr><td class="mono">Action</td><td>Built a layered pipeline: bank-agnostic parser + OCR fallback + 5 specialized layout parsers; deterministic rules-based entity resolution with fuzzy clustering; an additive LLM overlay (Groq); a Prisma/SQLite override + audit layer; a 21-module Excel export engine.</td></tr>
+          <tr><td class="mono">Result</td><td>One upload flow takes any supported statement to a corrected, exportable party ledger and full CA report pack; core pipeline works with zero external dependencies; every manual correction is preserved and audited.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sub-title">E. Concepts sheet</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Concept</th><th>File</th><th>One-line</th></tr></thead>
+        <tbody>
+          <tr><td>Integrated SSR + API via Vite plugin</td><td class="mono">vite-plugin-api.ts</td><td>One process, one port, for UI and API</td></tr>
+          <tr><td>Node-middleware ⇄ Fetch adapter</td><td class="mono">server/apiFetch.ts</td><td>h3 bridges Express into a Fetch-shaped prod handler</td></tr>
+          <tr><td>Driver-adapter Prisma</td><td class="mono">lib/prisma.ts</td><td>No query-engine binary, pure JS/native driver</td></tr>
+          <tr><td>Layered fallback parsing</td><td class="mono">converter/parser.ts</td><td>Generic parser, then 5 ordered layout-specific fallbacks</td></tr>
+          <tr><td>PDF-to-raster OCR pipeline</td><td class="mono">converter/tesseractExtractor.js</td><td>Render pages to bitmap, then OCR, for text-layer-less PDFs</td></tr>
+          <tr><td>Deterministic rules-based entity extraction</td><td class="mono">analysis/classification.ts</td><td>Scored regex cascade instead of a generic NLP library</td></tr>
+          <tr><td>Fuzzy string clustering</td><td class="mono">analysis/entityResolution.ts</td><td>Levenshtein + token similarity merges near-duplicate party names</td></tr>
+          <tr><td>LLM-as-overlay pattern</td><td class="mono">analysis/groqPartyResolver.ts</td><td>AI output is additive, never a silent overwrite</td></tr>
+          <tr><td>Snapshot-based undo model</td><td class="mono">prisma/schema.prisma</td><td>First-touch snapshot enables reliable reset-to-original</td></tr>
+          <tr><td>Audit logging as a side effect</td><td class="mono">services/partyOverrides.ts</td><td>Every mutation writes its own before/after row</td></tr>
+          <tr><td>Idempotent hydrate/projection</td><td class="mono">partyOverrides.ts (hydrateReport)</td><td>Base data + changes, recombined on every read</td></tr>
+          <tr><td>Proxy-based reactive data binding</td><td class="mono">data/reportData.ts</td><td>"Static" imports that always read live state</td></tr>
+          <tr><td>External-store subscription</td><td class="mono">lib/analysis-report-store.ts</td><td>useSyncExternalStore bridges non-React state into React</td></tr>
+          <tr><td>Redirect-only index route</td><td class="mono">routes/report.index.tsx</td><td>Thin routing layer for a deliberately one-page report</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <footer class="end">
+      Compiled directly from source — <code>frontend/</code>, its <code>server/</code> subtree, and the monorepo root. Every claim above is traceable to a specific file; sections flagged "not enough evidence" mark the limits of what this pass could confirm.
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1105 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-grid: var(--grid);
+
+  --color-risk-low: var(--risk-low);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-high: var(--risk-high);
+  --color-risk-critical: var(--risk-critical);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-info: var(--info);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Light = default (blue & white, clean fintech) */
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.99 0.005 250);
+  --foreground: oklch(0.18 0.04 260);
+  --surface: oklch(0.97 0.012 250);
+  --surface-elevated: oklch(1 0 0);
+  --grid: oklch(0.90 0.02 250);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.04 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.04 260);
+
+  --primary: oklch(0.55 0.22 255); /* vivid blue */
+  --primary-foreground: oklch(0.99 0.005 250);
+  --secondary: oklch(0.94 0.018 250);
+  --secondary-foreground: oklch(0.20 0.04 260);
+  --muted: oklch(0.95 0.012 250);
+  --muted-foreground: oklch(0.48 0.03 255);
+  --accent: oklch(0.62 0.20 240);
+  --accent-foreground: oklch(0.99 0.005 250);
+
+  --destructive: oklch(0.60 0.22 25);
+  --destructive-foreground: oklch(0.99 0.005 250);
+
+  --border: oklch(0.90 0.015 250);
+  --input: oklch(0.93 0.015 250);
+  --ring: oklch(0.55 0.22 255);
+
+  --risk-low: oklch(0.60 0.17 150);
+  --risk-medium: oklch(0.68 0.16 85);
+  --risk-high: oklch(0.65 0.20 45);
+  --risk-critical: oklch(0.58 0.22 25);
+  --positive: oklch(0.58 0.17 150);
+  --negative: oklch(0.58 0.22 25);
+  --info: oklch(0.55 0.22 255);
+
+  --chart-1: oklch(0.55 0.22 255);
+  --chart-2: oklch(0.68 0.16 230);
+  --chart-3: oklch(0.45 0.20 265);
+  --chart-4: oklch(0.72 0.14 215);
+  --chart-5: oklch(0.35 0.18 260);
+
+  --sidebar: oklch(0.97 0.012 250);
+  --sidebar-foreground: oklch(0.22 0.04 260);
+  --sidebar-primary: oklch(0.55 0.22 255);
+  --sidebar-primary-foreground: oklch(0.99 0.005 250);
+  --sidebar-accent: oklch(0.93 0.018 250);
+  --sidebar-accent-foreground: oklch(0.20 0.04 260);
+  --sidebar-border: oklch(0.90 0.015 250);
+  --sidebar-ring: oklch(0.55 0.22 255);
+}
+
+/* Dark = blue & black terminal */
+.dark {
+  --background: oklch(0.13 0.02 260);
+  --foreground: oklch(0.97 0.008 250);
+  --surface: oklch(0.17 0.025 260);
+  --surface-elevated: oklch(0.20 0.028 260);
+  --grid: oklch(0.26 0.03 260);
+
+  --card: oklch(0.17 0.025 260);
+  --card-foreground: oklch(0.97 0.008 250);
+  --popover: oklch(0.19 0.028 260);
+  --popover-foreground: oklch(0.97 0.008 250);
+
+  --primary: oklch(0.68 0.20 255);
+  --primary-foreground: oklch(0.12 0.02 260);
+  --secondary: oklch(0.24 0.03 260);
+  --secondary-foreground: oklch(0.97 0.008 250);
+  --muted: oklch(0.21 0.028 260);
+  --muted-foreground: oklch(0.68 0.03 255);
+  --accent: oklch(0.72 0.18 230);
+  --accent-foreground: oklch(0.12 0.02 260);
+
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.98 0.005 250);
+
+  --border: oklch(0.26 0.03 260);
+  --input: oklch(0.24 0.028 260);
+  --ring: oklch(0.68 0.20 255);
+
+  --risk-low: oklch(0.72 0.17 150);
+  --risk-medium: oklch(0.78 0.16 85);
+  --risk-high: oklch(0.72 0.18 45);
+  --risk-critical: oklch(0.65 0.22 25);
+  --positive: oklch(0.72 0.17 150);
+  --negative: oklch(0.65 0.22 25);
+  --info: oklch(0.72 0.18 230);
+
+  --chart-1: oklch(0.68 0.20 255);
+  --chart-2: oklch(0.72 0.18 230);
+  --chart-3: oklch(0.58 0.22 270);
+  --chart-4: oklch(0.78 0.14 215);
+  --chart-5: oklch(0.50 0.20 260);
+
+  --sidebar: oklch(0.15 0.022 260);
+  --sidebar-foreground: oklch(0.88 0.012 250);
+  --sidebar-primary: oklch(0.68 0.20 255);
+  --sidebar-primary-foreground: oklch(0.12 0.02 260);
+  --sidebar-accent: oklch(0.22 0.028 260);
+  --sidebar-accent-foreground: oklch(0.97 0.008 250);
+  --sidebar-border: oklch(0.24 0.028 260);
+  --sidebar-ring: oklch(0.68 0.20 255);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01", "ss03";
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .font-mono, code, kbd {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .grid-bg {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+  }
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      color-mix(in oklab, var(--foreground) 3%, transparent) 2px,
+      color-mix(in oklab, var(--foreground) 3%, transparent) 3px
+    );
+  }
+  .glow-primary { box-shadow: 0 0 40px -10px var(--primary); }
+  .text-balance { text-wrap: balance; }
+  .num { font-family: var(--font-mono); font-feature-settings: "tnum"; }
+}
+
+@media print {
+  @page { size: A4; margin: 4mm; }
+  html, body { background: #fff !important; }
+  body * { visibility: hidden !important; }
+  .print-area, .print-area * { visibility: visible !important; }
+  .print-area {
+    position: static !important;
+    width: 100% !important;
+    max-width: 188mm !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    background: #fff !important;
+    color: #101418 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    zoom: 0.82;
+  }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .print-area h1 { font-size: 18px !important; line-height: 1.1 !important; }
+  .print-area h3 { font-size: 11px !important; }
+  .print-area .text-xs { font-size: 8px !important; }
+  .print-area .text-sm { font-size: 9px !important; }
+  .print-area .text-2xl { font-size: 16px !important; }
+  .print-area .space-y-6 { row-gap: 8px !important; }
+  .print-area .space-y-5 { row-gap: 6px !important; }
+  .print-area .gap-6 { gap: 8px !important; }
+  .print-area .gap-4 { gap: 6px !important; }
+  .print-area .gap-3 { gap: 5px !important; }
+  .print-area .p-5 { padding: 7px !important; }
+  .print-area .px-5 { padding-left: 7px !important; padding-right: 7px !important; }
+  .print-area .py-4 { padding-top: 7px !important; padding-bottom: 7px !important; }
+  .print-area .p-4 { padding: 7px !important; }
+  .print-area .px-3 { padding-left: 6px !important; padding-right: 6px !important; }
+  .print-area .py-3 { padding-top: 4px !important; padding-bottom: 4px !important; }
+  .print-area .py-2\.5 { padding-top: 3px !important; padding-bottom: 3px !important; }
+  .print-area .mb-6 { margin-bottom: 6px !important; }
+  .print-area .mt-2 { margin-top: 4px !important; }
+  .print-area .mt-1 { margin-top: 2px !important; }
+  .print-area .mt-1\.5 { margin-top: 2px !important; }
+  .print-area section { break-inside: auto; page-break-inside: auto; box-shadow: none !important; }
+  .print-area .print-kpi > div { padding: 4px !important; }
+  .print-area .print-kpi .text-2xl { font-size: 14px !important; }
+  .print-area .print-tight-grid { gap: 6px !important; }
+  .print-area .print-tight-panel > header { padding: 6px 7px !important; }
+  .print-area .print-tight-panel > div { padding: 7px !important; }
+  .print-area .print-chart { height: 160px !important; }
+  .print-area .print-page-break { break-before: page; page-break-before: always; }
+  .print-area .recharts-wrapper { page-break-inside: avoid; break-inside: avoid; }
+  .print-area a[href] { color: #0563c1 !important; text-decoration: underline !important; }
+  .print-layout section > header {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "action"
+      "subtitle";
+    align-items: start;
+    row-gap: 3px;
+  }
+  .print-layout .panel-heading { display: contents; }
+  .print-layout .panel-title { grid-area: title; font-size: 13px !important; }
+  .print-layout .panel-action { grid-area: action; }
+  .print-layout .panel-subtitle { grid-area: subtitle; margin-top: 0 !important; }
+  .print-layout .mini-link {
+    color: #4b5563 !important;
+    font-size: 9px !important;
+    text-transform: none;
+    letter-spacing: normal;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+  }
+  .print-layout .mini-link-icon { display: none; }
+  .print-layout .panel {
+    border: 1px solid #e3e7ee !important;
+    background: #fff !important;
+    box-shadow: none;
+    border-radius: 4px;
+  }
+  .print-layout .panel-header { padding: 6px 8px !important; }
+  .print-layout .panel-body { padding: 6px 8px !important; }
+  .print-layout .panel-header {
+    background: #f7f9fc !important;
+    border-bottom: 1px solid #e6e9f0 !important;
+  }
+  .print-layout .stat-card {
+    background: #f9fafc !important;
+    border: 1px solid #e2e7ef !important;
+    box-shadow: none;
+    border-radius: 4px;
+  }
+  .print-layout .stat-label {
+    font-size: 9px !important;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .print-layout .stat-value { font-size: 15px !important; font-weight: 700; }
+  .print-layout .stat-delta { font-size: 8px !important; }
+  .print-layout .data-table { border-color: #e2e7ef !important; }
+  .print-layout .data-table-head { background: #f3f6fb !important; color: #576172 !important; }
+  .print-layout .data-table-row { background: #fff !important; }
+  .print-layout .data-table-row:nth-child(even) { background: #fafbfd !important; }
+  .print-layout .data-table-cell { border-color: #e6e9f0 !important; }
+  .print-layout .recharts-cartesian-grid line { stroke: #e5e9f2 !important; }
+  .print-layout .recharts-cartesian-axis-tick text { fill: #596273 !important; }
+  .print-layout .recharts-legend-item-text { color: #596273 !important; }
+  .print-layout .print-watermark {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    letter-spacing: 0.2em;
+    color: rgba(16, 24, 40, 0.04);
+    transform: rotate(-18deg);
+    pointer-events: none;
+  }
+  .print-layout .print-footer {
+    position: fixed;
+    bottom: 5mm;
+    left: 6mm;
+    right: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #6b7280;
+    border-top: 1px solid #e6e9f0;
+    padding-top: 3px;
+  }
+  .print-layout .print-page-number::after { content: counter(page); }
+  .print-layout .print-hero {
+    display: grid;
+    grid-template-columns: 1.6fr 0.4fr;
+    gap: 6px;
+    padding: 4px 6px;
+    border: 1px solid #e3e7ee;
+    background: #fff;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .print-layout .print-hero-compact .print-hero-title { font-size: 15px; }
+  .print-layout .print-hero-compact .print-hero-tag { display: none; }
+  .print-layout .print-toc {
+    margin-bottom: 6px;
+    padding: 4px 6px;
+    border: 1px solid #e3e7ee;
+    border-radius: 4px;
+    background: #f9fafb;
+  }
+  .print-layout .print-toc-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 3px;
+  }
+  .print-layout .print-toc-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .print-layout .print-toc-link {
+    font-size: 9px;
+    color: #0563c1 !important;
+    text-decoration: underline !important;
+  }
+  .print-layout .print-eyebrow {
+    font-size: 9px;
+    text-transform: none;
+    letter-spacing: normal;
+    color: #667085;
+  }
+  .print-layout .print-hero-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+  .print-layout .print-hero-sub {
+    font-size: 9px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+  .print-layout .print-hero-tag {
+    margin-top: 4px;
+    font-size: 8px;
+    text-transform: none;
+    letter-spacing: normal;
+    color: #41556b;
+  }
+  .print-layout .print-hero-right {
+    text-align: right;
+    font-size: 9px;
+    color: #6b7280;
+  }
+  .print-layout .print-hero-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #111827;
+  }
+  .print-layout .print-hero-conf { margin-top: 3px; text-transform: none; letter-spacing: normal; }
+  .print-layout .print-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid #e6e9f0;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    gap: 12px;
+  }
+  .print-layout .print-section-title {
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: normal;
+    color: #0f172a;
+  }
+  .print-layout .print-section-sub { font-size: 8px; color: #6b7280; }
+  .print-layout .summary-card { padding: 5px !important; border-radius: 4px; }
+  .print-layout .summary-code { font-size: 8px !important; }
+  .print-layout .summary-title { font-size: 10px !important; }
+  .print-layout .summary-subtitle { font-size: 8px !important; margin-bottom: 3px !important; }
+  .print-layout .summary-stat-label {
+    font-size: 7px !important;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .print-layout .summary-stat-value { font-size: 10px !important; }
+  .print-layout .data-table-head { text-transform: none !important; letter-spacing: normal !important; }
+}
+
+.print-only { display: none; }
+
+/* Dedicated master PDF export (/print/master) — clean document, no app chrome */
+body.master-pdf-export {
+  margin: 0;
+  background: #fff;
+  color: #111827;
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 10pt;
+}
+
+.master-pdf-root {
+  max-width: 190mm;
+  margin: 0 auto;
+  padding: 6mm 8mm 12mm;
+}
+
+.master-pdf-cover {
+  border-bottom: 2px solid #1f4e79;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.master-pdf-brand {
+  font-size: 9pt;
+  color: #4b5563;
+  letter-spacing: 0.04em;
+}
+
+.master-pdf-title {
+  font-size: 18pt;
+  font-weight: 700;
+  margin: 4px 0 2px;
+  line-height: 1.15;
+}
+
+.master-pdf-meta {
+  font-size: 9pt;
+  color: #6b7280;
+  margin: 0;
+}
+
+.master-pdf-risk {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 9pt;
+  font-weight: 600;
+}
+
+.master-pdf-section {
+  margin-bottom: 10px;
+}
+
+.master-pdf-section h2 {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #1f4e79;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 2px;
+  margin: 0 0 6px;
+}
+
+.master-pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+
+.master-pdf-table th,
+.master-pdf-table td {
+  border: 1px solid #d1d5db;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.master-pdf-table th {
+  background: #f3f6fb;
+  font-weight: 600;
+}
+
+.master-pdf-table .num {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.master-pdf-table-compact td,
+.master-pdf-table-compact th {
+  padding: 3px 5px;
+  font-size: 8pt;
+}
+
+.master-pdf-prose {
+  font-size: 9pt;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.master-pdf-link {
+  color: #0563c1;
+  text-decoration: underline;
+  word-break: break-all;
+  font-size: 7.5pt;
+}
+
+.master-pdf-footer {
+  margin-top: 12px;
+  padding-top: 4px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 7.5pt;
+  color: #9ca3af;
+  text-align: center;
+}
+
+@media print {
+  body.master-pdf-export {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body.master-pdf-export * {
+    visibility: visible !important;
+  }
+  .master-pdf-page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+  .master-pdf-link {
+    color: #0563c1 !important;
+    text-decoration: underline !important;
+  }
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+}
+
+/* Sketch-style 2 page master PDF. First page is the summary grid; second page is the module index. */
+body.master-pdf-export {
+  margin: 0;
+  background: #ffffff;
+  color: #111827;
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 9pt;
+}
+
+.master-pdf-root {
+  width: 194mm;
+  max-width: 194mm;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.master-page {
+  box-sizing: border-box;
+  min-height: 285mm;
+  padding: 4mm 0 8mm;
+}
+
+.master-pdf-cover,
+.master-modules-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8mm;
+  border-bottom: 1.2px solid #1f2937;
+  margin-bottom: 4mm;
+  padding-bottom: 2mm;
+}
+
+.master-pdf-brand {
+  color: #4b5563;
+  font-size: 8pt;
+  letter-spacing: 0;
+}
+
+.master-pdf-title {
+  color: #111827;
+  font-size: 18pt;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 1mm 0 0;
+}
+
+.master-pdf-meta-block {
+  display: grid;
+  gap: 0.6mm;
+  color: #4b5563;
+  font-size: 7.5pt;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.master-pdf-meta-block strong {
+  color: #111827;
+  font-size: 8.5pt;
+}
+
+.master-box {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #1f2937;
+  border-radius: 2px;
+  background: #ffffff;
+  padding: 2.4mm;
+}
+
+.master-box h2 {
+  color: #111827;
+  font-size: 9.5pt;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 2mm;
+  border: 0;
+  padding: 0;
+}
+
+.master-box-title {
+  color: #374151;
+  font-size: 8pt;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.master-box-value {
+  color: #111827;
+  font-family: var(--font-mono);
+  font-size: 11pt;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 3mm;
+  overflow-wrap: anywhere;
+}
+
+.master-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3mm;
+  margin-bottom: 4mm;
+}
+
+.master-kpi-box {
+  height: 23mm;
+}
+
+.master-middle-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.95fr;
+  gap: 4mm;
+  margin-bottom: 4mm;
+}
+
+.master-spend-box {
+  height: 62mm;
+}
+
+.master-side-stack {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 3mm;
+  height: 62mm;
+}
+
+.master-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3mm;
+  margin-bottom: 4mm;
+}
+
+.master-small-box {
+  height: 23mm;
+}
+
+.master-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4mm;
+}
+
+.master-bottom-grid .master-box {
+  height: 106mm;
+}
+
+.master-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.6pt;
+  line-height: 1.25;
+}
+
+.master-mini-table th,
+.master-mini-table td {
+  border: 0.8px solid #d1d5db;
+  padding: 1.4mm 1.6mm;
+  text-align: left;
+  vertical-align: top;
+}
+
+.master-mini-table th {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 700;
+}
+
+.master-mini-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.master-list {
+  display: grid;
+  gap: 1.5mm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 7.8pt;
+}
+
+.master-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2mm;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1.2mm;
+}
+
+.master-list span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.master-list strong {
+  font-family: var(--font-mono);
+  font-size: 7.5pt;
+  white-space: nowrap;
+}
+
+.master-modules-page {
+  break-before: page;
+  page-break-before: always;
+}
+
+.master-module-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3mm;
+}
+
+.master-module-card {
+  display: grid;
+  min-height: 43mm;
+  align-content: start;
+  gap: 2mm;
+  border: 1px solid #1f2937;
+  border-radius: 2px;
+  background: #ffffff;
+  color: #111827;
+  padding: 3mm;
+  text-decoration: none;
+}
+
+.master-module-card span {
+  color: #1f4e79;
+  font-family: var(--font-mono);
+  font-size: 10pt;
+  font-weight: 700;
+}
+
+.master-module-card strong {
+  font-size: 10pt;
+  line-height: 1.2;
+}
+
+.master-module-card em {
+  color: #6b7280;
+  font-size: 6.8pt;
+  font-style: normal;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.master-pdf-footer {
+  color: #6b7280;
+  font-size: 7pt;
+  text-align: center;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 6mm;
+  }
+
+  body.master-pdf-export,
+  body.master-pdf-export * {
+    visibility: visible !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .master-pdf-root {
+    width: 198mm;
+    max-width: 198mm;
+  }
+
+  .master-page {
+    height: 285mm;
+    min-height: 285mm;
+    overflow: hidden;
+    padding: 0 0 8mm;
+  }
+
+  .master-pdf-footer {
+    position: fixed;
+    right: 0;
+    bottom: 1.5mm;
+    left: 0;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5mm;
+  }
+}
+
+/* Browser-style Master Summary PDF export. Matches /report/overview instead of the sketch mockup. */
+body.browser-master-pdf-export {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.browser-pdf-root {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 24px 0 48px;
+}
+
+.browser-pdf-page {
+  min-height: 1040px;
+  padding: 0;
+}
+
+.browser-pdf-modules {
+  padding-top: 24px;
+}
+
+.browser-pdf-footer {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  text-align: center;
+}
+
+body.browser-master-pdf-export a.summary-title-link,
+body.browser-master-pdf-export a.mini-link {
+  color: #0563c1 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+
+body.browser-master-pdf-export .summary-card:hover {
+  border-color: #4f81bd;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 5mm;
+  }
+
+  body.browser-master-pdf-export {
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body.browser-master-pdf-export * {
+    visibility: visible !important;
+  }
+
+  .browser-pdf-root {
+    width: 198mm;
+    max-width: 198mm;
+    margin: 0 auto;
+    padding: 0 0 8mm;
+    color: #101418;
+  }
+
+  .browser-pdf-page {
+    box-sizing: border-box;
+    height: 279mm;
+    min-height: 279mm;
+    overflow: hidden;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .browser-pdf-summary {
+    padding-top: 0;
+  }
+
+  .browser-pdf-modules {
+    break-before: page;
+    page-break-before: always;
+    padding-top: 0;
+  }
+
+  .browser-pdf-root h1 {
+    font-size: 22px !important;
+    line-height: 1.1 !important;
+  }
+
+  .browser-pdf-root .space-y-6 {
+    row-gap: 8px !important;
+  }
+
+  .browser-pdf-root .print-kpi {
+    gap: 6px !important;
+  }
+
+  .browser-pdf-root .print-tight-grid {
+    gap: 8px !important;
+  }
+
+  .browser-pdf-root .print-tight-panel > header {
+    padding: 6px 8px !important;
+  }
+
+  .browser-pdf-root .print-tight-panel > div {
+    padding: 7px 8px !important;
+  }
+
+  .browser-pdf-root .stat-card {
+    border: 1px solid #e2e7ef !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    border-radius: 8px;
+    padding: 6px !important;
+  }
+
+  .browser-pdf-root .stat-label {
+    font-size: 8px !important;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .browser-pdf-root .stat-value {
+    font-size: 12px !important;
+    font-weight: 700;
+  }
+
+  .browser-pdf-root .stat-delta {
+    font-size: 7px !important;
+  }
+
+  .browser-pdf-root .panel {
+    border: 1px solid #e3e7ee !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    border-radius: 8px;
+  }
+
+  .browser-pdf-root .panel-header {
+    background: #f7f9fc !important;
+    border-bottom: 1px solid #e6e9f0 !important;
+  }
+
+  .browser-pdf-root .panel-title {
+    font-size: 11px !important;
+  }
+
+  .browser-pdf-root .panel-subtitle,
+  .browser-pdf-root .mini-link,
+  .browser-pdf-root .text-xs {
+    font-size: 9px !important;
+  }
+
+  .browser-pdf-root .data-table-cell,
+  .browser-pdf-root .data-table-head {
+    padding: 3px 5px !important;
+    font-size: 8px !important;
+  }
+
+  .browser-pdf-root .data-table-head {
+    background: #f3f6fb !important;
+    color: #576172 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+  }
+
+  .browser-pdf-root .data-table-row:nth-child(even) {
+    background: #fafbfd !important;
+  }
+
+  .browser-pdf-root .data-table-cell {
+    border-color: #e6e9f0 !important;
+  }
+
+  .browser-pdf-root .print-chart {
+    height: 126px !important;
+  }
+
+  .browser-pdf-root .recharts-tooltip-wrapper {
+    display: none !important;
+  }
+
+  .browser-pdf-root .summary-card {
+    min-height: 72px;
+    padding: 6px !important;
+    border-radius: 8px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .browser-pdf-root .summary-code {
+    font-size: 8px !important;
+  }
+
+  .browser-pdf-root .summary-title {
+    font-size: 10px !important;
+  }
+
+  .browser-pdf-root .summary-subtitle {
+    font-size: 8px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .browser-pdf-root .summary-stat-label {
+    font-size: 7px !important;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .browser-pdf-root .summary-stat-value {
+    font-size: 10px !important;
+  }
+
+  .browser-pdf-root a.summary-title-link,
+  .browser-pdf-root a.mini-link {
+    color: #0563c1 !important;
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
+  }
+
+  .browser-pdf-footer {
+    position: fixed;
+    right: 5mm;
+    bottom: 2mm;
+    left: 5mm;
+    border-top: 1px solid #e6e9f0;
+    padding-top: 2mm;
+  }
+}

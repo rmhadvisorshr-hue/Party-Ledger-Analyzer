@@ -4,7 +4,8 @@ Full-stack bank statement / party-ledger analysis app: React UI and API run toge
 
 ## Project Structure
 
--   `frontend/`: React UI, TanStack Start SSR, and integrated API (`frontend/server/` — PDF/OCR parsing, analysis, Excel export).
+-   `frontend/`: React UI (TanStack Start SSR).
+-   `backend/`: Express API — PDF/OCR parsing, analysis, Excel export. Also mounted into `frontend`'s Vite dev/preview server for the integrated one-process workflow below.
 
 ## Prerequisites
 
@@ -41,13 +42,13 @@ npm run start
 
 ### 3. Running Frontend and Backend Separately
 
-The API (`frontend/server/`) can also run as its own process, independent of Vite — useful for deploying the backend on its own or testing it in isolation.
+The API (`backend/`) can also run as its own process, independent of Vite — useful for deploying the backend on its own or testing it in isolation.
 
 Backend, on its own port:
 
 ```bash
-cd frontend
-npm run server          # http://localhost:3001, hot-reloads on change
+cd backend
+npm run dev          # http://localhost:3001, hot-reloads on change
 ```
 
 Frontend, pointed at that backend instead of the integrated same-origin API:
@@ -74,9 +75,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 -   `npm run dev`: Starts the Vite development server (also serves the integrated `/api/*` routes).
 -   `npm run build`: Builds the application for production.
 -   `npm run preview`: Serves the production build locally.
--   `npm run server`: Starts the API standalone (`server/standalone.ts`), independent of Vite.
--   `npm run server:start`: Same, without watch mode.
 -   `npm run lint`: Lints the codebase using ESLint.
 -   `npm run format`: Formats the code using Prettier.
 
-# Party-Ledger-Analyzer
+### Backend (`backend/`)
+
+-   `npm run dev`: Starts the API standalone (`standalone.ts`), independent of Vite, with hot reload.
+-   `npm run start`: Same, without watch mode.
+-   `npm run typecheck`: Runs the TypeScript compiler to check for type errors.
