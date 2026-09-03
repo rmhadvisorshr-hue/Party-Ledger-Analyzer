@@ -1,8 +1,17 @@
 import "./lib/error-capture";
 
-import { handleApiFetch } from "../../backend/apiFetch";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+
+// Set only when the API is deployed separately (see frontend/src/lib/api.ts).
+// When set, the embedded backend below is never invoked -- all /api/*
+// requests go to that external URL from the browser instead.
+const EXTERNAL_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+async function handleEmbeddedApiFetch(request: Request): Promise<Response | null> {
+  const { handleApiFetch } = await import("../../backend/apiFetch");
+  return handleApiFetch(request);
+}
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -70,9 +79,11 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      const apiResponse = await handleApiFetch(request);
-      if (apiResponse) {
-        return apiResponse;
+      if (!EXTERNAL_API_BASE_URL) {
+        const apiResponse = await handleEmbeddedApiFetch(request);
+        if (apiResponse) {
+          return apiResponse;
+        }
       }
 
       const handler = await getServerEntry();
