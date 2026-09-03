@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "dev:portal": "vite dev --host 0.0.0.0 --port 5180",
     "build": "vite build",
+    "build:standalone": "vite build --config vite.config.standalone.ts",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "start": "vite preview --host 0.0.0.0",
