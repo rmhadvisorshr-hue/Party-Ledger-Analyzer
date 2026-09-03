@@ -2,9 +2,11 @@
 
 Target: **backend on the same Hostinger VPS as the ITR and Trial-Balance-Converter projects** (`200.234.40.130`), fully isolated in its own folder; GitHub Actions auto-deploys the backend on every push to `backend/**` in `github.com/rmhadvisorshr-hue/Party-Ledger-Analyzer`. Frontend hosting is **out of scope for this handbook** — wherever it ends up, point it at the backend's HTTPS URL from step 4 and set `FRONTEND_ORIGIN` in step 2 accordingly.
 
-This doc follows the same log format as the Trial-Balance-Converter handbook — command, why, outcome — so it can be picked back up without re-deriving context. Nothing below has been run yet; check items off (⬜ → ✅) as you go.
+This doc follows the same log format as the Trial-Balance-Converter handbook — command, why, outcome — so it can be picked back up without re-deriving context.
 
 Status legend: ✅ done and verified · ⏳ in progress / unconfirmed · ⬜ not started yet
+
+**Backend is live and auto-deploying** as of 2026-09-03. Steps 1–6 below are all ✅. Step 7 (pointing a frontend at it) is the only thing left, and it's genuinely blocked on a decision that hasn't been made yet: where the frontend will live.
 
 ---
 
@@ -48,13 +50,9 @@ rm node.tar.xz
 chown -R plaapp:plaapp /opt/partyledger-backend
 ```
 
-**Before using it, confirm a free port** — `8097` is already `tbconverter-backend`; check what ITR uses too:
-```bash
-ss -tlnp | grep -E ':(8097|8098|8099)\b'
-```
-This handbook assumes **`8098`** is free. If it isn't, swap it everywhere below (`.env`, the systemd health-check, the nginx `proxy_pass`).
+**Checked ports in use before picking one:** `ss -tlnp` showed `itr-backend` on `8080` and `tbconverter-backend` on `8097` — **`8098`** confirmed free, used throughout below.
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done. `node --version` on the isolated install → `v22.23.2`.
 
 ---
 
@@ -88,7 +86,7 @@ npm install
 chown -R plaapp:plaapp /opt/partyledger-backend
 ```
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done — `npm install` → `added 219 packages`. Same pre-existing deprecation warnings and `npm audit` findings (3 vulnerabilities, 2 moderate/1 high, inherited via `pdfjs-dist`) as the Trial-Balance-Converter deploy — not addressed here, not blocking. `FRONTEND_ORIGIN` left commented out in `.env` for now (see step 7) — CORS has nothing to allow yet, but `/health` and same-origin/no-origin requests work fine without it.
 
 ---
 
@@ -130,7 +128,7 @@ curl -s http://127.0.0.1:8098/health
 # {"ok":true,"service":"ai-bank-statement-analyzer"}
 ```
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done, first try, no crash-loop. `systemctl status` showed `Active: active (running)`, log line `Party Ledger Analyzer API running standalone at http://localhost:8098`.
 
 ---
 
@@ -170,9 +168,9 @@ certbot --nginx -d partyledger.200-234-40-130.sslip.io --non-interactive --agree
 curl -s https://partyledger.200-234-40-130.sslip.io/health
 ```
 
-**The backend's live HTTPS URL will be `https://partyledger.200-234-40-130.sslip.io`.**
+**The backend's live HTTPS URL is `https://partyledger.200-234-40-130.sslip.io`.**
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done — certbot issued and deployed the certificate on the first try. Certificate expires **2026-12-02**, auto-renews.
 
 ---
 
@@ -180,23 +178,18 @@ curl -s https://partyledger.200-234-40-130.sslip.io/health
 
 **What:** a dedicated keypair (separate from ITR's and the Trial-Balance-Converter's) so GitHub Actions can log into the VPS as `root` without your real password.
 
-**Where:** Local Computer — **generate it outside any git working tree** (e.g. your home directory or a scratch folder, *not* inside `D:\CA-RMHStaffPortal\one-page-party-analysis`). The Trial-Balance-Converter deploy generated a key while `cd`'d into a git-tracked folder and got lucky that `.gitignore` never caught it in time — don't repeat that.
+**Two keys exist for this project, not one — worth keeping straight:**
+- A separate **operator key**, generated outside this git working tree (in a scratch/session-local folder), used to do all the interactive setup in steps 1–4 above. It is not stored anywhere in this repo or in GitHub — it only ever lived in a local scratch folder.
+- The **CI deploy key** below, whose *public* half lives in the VPS's `authorized_keys` and whose *private* half lives only in the `VPS_SSH_KEY` GitHub secret.
+
+Both were generated **outside any git working tree** (a scratch folder, never `D:\CA-RMHStaffPortal\one-page-party-analysis`) — the Trial-Balance-Converter deploy generated its key while `cd`'d into a git-tracked folder and got lucky that `.gitignore` never caught it in time; not worth repeating that risk.
 
 ```powershell
-cd $HOME
 ssh-keygen -t ed25519 -f partyledger_deploy_key
 ```
-Empty passphrase (Enter twice).
+Empty passphrase.
 
-Install the public key on the VPS (append, don't overwrite — `~/.ssh/authorized_keys` already has ITR's and the Trial-Balance-Converter's keys in it):
-```bash
-nano ~/.ssh/authorized_keys
-```
-
-**Verify:**
-```powershell
-ssh -i partyledger_deploy_key root@200.234.40.130 "echo connected ok"
-```
+Public key appended to `~/.ssh/authorized_keys` on the VPS (alongside ITR's and the Trial-Balance-Converter's keys, not overwriting them). Verified it logs in without a password.
 
 **Repo secrets** — GitHub → `rmhadvisorshr-hue/Party-Ledger-Analyzer` → **Settings → Secrets and variables → Actions**:
 
@@ -207,9 +200,9 @@ ssh -i partyledger_deploy_key root@200.234.40.130 "echo connected ok"
 | `VPS_APP_DIR` | `/opt/partyledger-backend/app` |
 | `VPS_SSH_KEY` | full contents of `partyledger_deploy_key` |
 
-Delete the local key files (`partyledger_deploy_key`, `partyledger_deploy_key.pub`) once the secret is saved.
+Set via the GitHub API (fetch the repo's Actions public key, `libsodium` seal each value, `PUT .../actions/secrets/<name>`) rather than pasted into the UI by hand — same end result, four secrets visible under **Settings → Secrets and variables → Actions**. Local key files deleted from the scratch folder once confirmed set.
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done — all four secrets set and confirmed listed under "Repository secrets."
 
 ---
 
@@ -217,11 +210,11 @@ Delete the local key files (`partyledger_deploy_key`, `partyledger_deploy_key.pu
 
 **What:** on every push to `backend/**` on `main`, rsync the backend to the VPS, install dependencies with the isolated Node, restart the service.
 
-**Where:** already added to this repo at [.github/workflows/deploy-backend.yml](.github/workflows/deploy-backend.yml) — nothing to write by hand, just commit and push it, then trigger the first run manually (GitHub → **Actions** tab → **Deploy Backend** → **Run workflow**), since adding the workflow file itself doesn't touch `backend/**` and won't auto-trigger.
+**Where:** committed to this repo at [.github/workflows/deploy-backend.yml](.github/workflows/deploy-backend.yml) and pushed to `main`. Since that push only added the workflow file itself (not a `backend/**` change), it didn't auto-trigger — dispatched manually instead (GitHub → **Actions** tab → **Deploy Backend** → **Run workflow**, or `POST .../actions/workflows/deploy-backend.yml/dispatches`).
 
 **Why `--exclude data --exclude server/uploads` matters** (see step 0): both are gitignored and hold state that only ever exists on the VPS — `rsync --delete` without excluding them would delete saved party overrides and the OCR cache on every single deploy.
 
-**Outcome:** ⬜ Not started.
+**Outcome:** ✅ Done — first run, manually dispatched, completed with conclusion `success`. Post-deploy `curl https://partyledger.200-234-40-130.sslip.io/health` still returned `{"ok":true,...}` and `.env`/`data/`/`server/uploads/` were all still intact on the VPS afterward.
 
 ---
 
