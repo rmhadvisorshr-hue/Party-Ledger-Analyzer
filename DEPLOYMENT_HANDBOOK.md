@@ -6,7 +6,7 @@ This doc follows the same log format as the Trial-Balance-Converter handbook —
 
 Status legend: ✅ done and verified · ⏳ in progress / unconfirmed · ⬜ not started yet
 
-**Backend is live and auto-deploying** as of 2026-09-03. Steps 1–6 below are all ✅. Step 7 (pointing a frontend at it) is the only thing left, and it's genuinely blocked on a decision that hasn't been made yet: where the frontend will live.
+**The whole pipeline is live end to end** as of 2026-09-04. Steps 1–7 below are all ✅. Frontend: `https://party-ledger-analyzer-frontend.vercel.app` (Vercel). Backend: `https://partyledger.200-234-40-130.sslip.io` (this VPS).
 
 ---
 
@@ -220,10 +220,17 @@ Set via the GitHub API (fetch the repo's Actions public key, `libsodium` seal ea
 
 ## 7. Point the frontend at this backend
 
-Once the frontend has a real home, set two things:
-1. Wherever the frontend's env vars live, point its API base URL at `https://partyledger.200-234-40-130.sslip.io`.
-2. Update `FRONTEND_ORIGIN` in `/opt/partyledger-backend/app/.env` on the VPS to that frontend's real origin, then `systemctl restart partyledger-backend`.
+The frontend turned out to already be deployed on Vercel (`https://party-ledger-analyzer-frontend.vercel.app`), separately from this backend work — see the note below on the Vercel build fix that was needed first.
 
-Until then, CORS has nothing to allow, so only same-origin/no-origin requests (e.g. `curl`) will get through — expected, not a bug.
+1. `VITE_API_BASE_URL=https://partyledger.200-234-40-130.sslip.io` set in the Vercel project's env vars (Production), pointing the client at this backend.
+2. `FRONTEND_ORIGIN=https://party-ledger-analyzer-frontend.vercel.app` set in `/opt/partyledger-backend/app/.env` on the VPS, `systemctl restart partyledger-backend`.
 
-**Outcome:** ⬜ Not started — frontend hosting not yet decided.
+**Verified:** CORS preflight (`OPTIONS /api/analysis` with `Origin: https://party-ledger-analyzer-frontend.vercel.app`) returns `204` with `Access-Control-Allow-Origin` echoing that exact origin.
+
+**Outcome:** ✅ Done. Still worth one real manual test — upload an actual bank statement through the live site — since curl only proves the plumbing, not the analysis pipeline end-to-end.
+
+### Aside: the frontend's own Vercel deploy needed a fix first
+
+Separately from this backend's deploy, the already-existing Vercel frontend was 404ing on every route. Root cause: `vite.config.ts` statically imports `vite-plugin-api.ts` for the integrated dev/preview mode, and Vite's config loader bundles that whole module graph eagerly — even the parts behind a runtime-only dynamic import — pulling in the entire backend (Express, tesseract.js, pdfjs-dist, `exceljs`) just to evaluate the config. That broke the build on Vercel, where only the `frontend` workspace gets installed.
+
+Fixed with a standalone build path that never references the backend (`vite.config.standalone.ts` + `server.standalone.ts` + `frontend/vercel.json` pointing Vercel's `buildCommand` at it) — the default `npm run build` (Render, local dev) is untouched. That got the *build* passing, but the *site* still 404'd: TanStack Start needs the `nitro` Vite plugin to package the SSR server for Vercel's runtime (Build Output API v3 — a `__server.func` Node function + static assets); without it Vercel has no adapter and returns its own platform-level 404 for every route regardless of build success. Added `nitro()` to `vite.config.standalone.ts`, verified locally with `VERCEL=1 npm run build:standalone` that it produces `.vercel/output/functions/__server.func/`, pushed, confirmed `https://party-ledger-analyzer-frontend.vercel.app/` returns real HTML.
