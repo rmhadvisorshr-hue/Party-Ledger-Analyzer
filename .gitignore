@@ -20,6 +20,7 @@ dist-ssr
 .vinxi
 .tanstack/**
 .nitro
+.vercel
 *.local
 .env
 
